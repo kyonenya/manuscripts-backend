@@ -14,11 +14,9 @@ export const selectAll = (executor: dbExecutable) => {
     const params = [limit];
     try {
       const queryResult = await executor(sql, params);
-      console.log(queryResult.rowCount);
+      return queryResult.rows;
     } catch (err) {
       console.error(err);
     }
   };
 };
-
-selectAll(executor)({ limit: 3 });

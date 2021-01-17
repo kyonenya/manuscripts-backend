@@ -2,7 +2,6 @@
   "name": "manuscripts.herokuapp.com",
   "version": "1.0.0",
   "scripts": {
-    "manuscriptsRepository": "node dist/manuscriptsRepository.js",
     "start": "node dist/main.js",
     "tsc": "tsc -w"
   },
