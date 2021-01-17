@@ -2,6 +2,7 @@
   "name": "manuscripts.herokuapp.com",
   "version": "1.0.0",
   "scripts": {
+    "start": "node ./dist/main.js",
     "tsc": "tsc -w"
   },
   "dependencies": {
@@ -10,6 +11,8 @@
     "@types/pg": "^7.14.8",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-promise-router": "^4.0.1",
+    "helmet": "^4.3.1",
     "pg": "^8.5.1",
     "typescript": "^4.1.3"
   }
