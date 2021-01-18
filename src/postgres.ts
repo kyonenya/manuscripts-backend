@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 import dotenv from 'dotenv';
-import { dbExecutable } from './manuscriptsRepository';
+import { dbExecutable } from './entriesRepository';
 
 dotenv.config();
 

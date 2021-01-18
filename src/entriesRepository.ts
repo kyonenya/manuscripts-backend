@@ -7,7 +7,7 @@ export const selectAll = (executor: dbExecutable) => {
   return async ({ limit }: { limit: number }) => {
     const sql = `
       SELECT *
-      FROM manuscripts
+      FROM entries
       ORDER BY created_at DESC
       LIMIT $1
       ;`;

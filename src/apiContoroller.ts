@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as entriesRepository from './manuscriptsRepository';
+import * as entriesRepository from './entriesRepository';
 import { executor } from './postgres';
 
 export const showAllEntries = async (req: Request, res: Response) => {
