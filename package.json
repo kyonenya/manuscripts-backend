@@ -2,7 +2,7 @@
   "name": "manuscripts.herokuapp.com",
   "version": "1.0.0",
   "scripts": {
-    "markdown": "node dist/markdown.js",
+    "Either": "node dist/Either.js",
     "start": "node dist/main.js",
     "tsc": "tsc -w"
   },
