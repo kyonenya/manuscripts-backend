@@ -1,42 +1,38 @@
-//type eitherable = 'Right'|'Left';
 type f<T, U> = (x: T) => U;
+type TEither<L, R> = Either<L, undefined> | Either<undefined, R>;
 
-class Either<T> {
-  constructor(
-    private _status: 'Right'|'Left',
-    private _value: T,
-  ) {}
-  public map = (fn: Function): any => this.isLeft()
-    ? this
-    : ofRight(fn(this._value));
-  public mapLeft = (fn: Function): any => this.isLeft()
-    ? ofLeft(fn(this._value))
-    : this;
-  public getOrElse = <U>(other: U) => this.isLeft()
-    ? other
-    : this._value;
-  public isLeft = () => this._status === 'Left';
-  public isRight = () => this._status === 'Right';
+class Either<L = undefined, R = undefined> {
+  private left?: Left<L>;
+  private right?: Right<R>;
+  constructor(lr: Left<L>|Right<R>) {
+    if (lr instanceof Left) this.left = lr;
+    if (lr instanceof Right) this.right = lr;
+  }
+  public map = <T>(fn: f<R, T>): TEither<L, T> => {
+    return this.left
+      ? ofLeft(this.left.value)
+      : ofRight(fn(this.right!.value));
+  }
+  public isLeft = () => this.left !== null;
+  public isRight = () => this.right !== null;
 }
 
-const ofRight = <T>(val: T) => new Either('Right', val);
-const ofLeft = <T>(val: T) => new Either('Left', val);
+const ofRight = <T>(val: T) => new Either(new Right(val));
+const ofLeft = <T>(val: T) => new Either(new Left(val));
 const fromNullable = <T>(val: T) => val === null || val === undefined
   ? ofLeft(val)
   : ofRight(val);
-const tryCatch = (fn: Function, onError: Function) => {
-  try {
-    return ofRight(fn());
-  } catch (err) {
-    return ofLeft(onError(err));
-  }
-};
 
-const decode = (url: string) => tryCatch(() => decodeURIComponent(url), (e: any) => e.toString());
+class Left<T> {
+  public readonly status = 'Left';
+  constructor(
+    public readonly value: T,
+  ){}
+}
 
-//console.log(decode('valid%3Fid%3D')); // Right('valid%3Fid%3D')
-//console.log(decode('invalid3s%%F%')); // Left(URIError: ...)
-
-//console.log(fromNullable(null).map((x: any) => x + 3));
-//console.log(fromNullable(null).getOrElse('Error!'));
-//console.log(fromNullable(2).map((x: number) => x + 5));
+class Right<T> {
+  public readonly status = 'Right';
+  constructor(
+    public readonly value: T,
+  ){}
+}
