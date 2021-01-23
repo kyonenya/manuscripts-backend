@@ -2,19 +2,16 @@ type f<T, U> = (x: T) => U;
 type TEither<L, R> = Either<L, undefined> | Either<undefined, R>;
 
 class Either<L = undefined, R = undefined> {
-  private left?: Left<L>;
-  private right?: Right<R>;
-  constructor(lr: Left<L>|Right<R>) {
-    if (lr instanceof Left) this.left = lr;
-    if (lr instanceof Right) this.right = lr;
-  }
+  constructor(
+    private readonly lr: Left<L>|Right<R>
+  ) {}
   public map = <T>(fn: f<R, T>): TEither<L, T> => {
-    return this.left
-      ? ofLeft(this.left.value)
-      : ofRight(fn(this.right!.value));
+    return this.lr instanceof Left
+      ? ofLeft(this.lr.value)
+      : ofRight(fn(this.lr.value));
   }
-  public isLeft = () => this.left !== null;
-  public isRight = () => this.right !== null;
+  public isLeft = () => this.lr instanceof Left;
+  public isRight = () => this.lr instanceof Right;
 }
 
 const ofRight = <T>(val: T) => new Either(new Right(val));
@@ -36,3 +33,8 @@ class Right<T> {
     public readonly value: T,
   ){}
 }
+
+ofRight(123)
+  .map((x: number) => x * 2)
+  .map((x: number) => console.log(x))
+  ;
