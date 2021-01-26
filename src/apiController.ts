@@ -14,3 +14,9 @@ export const showAllEntries = async (req: Request, res: Response) => {
   const data = await dbInvoker(params);
   res.json(data);
 };
+
+export const createNewEntry = (req: Request, res: Response) => {
+  console.log(req.body);
+  const entry = new Entry();
+  res.json('Entry is successfly created');
+}
