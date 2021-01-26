@@ -8,6 +8,7 @@ type dbSchemable = {
   text: string,
   starred: boolean,
   uuid: string,
+  taglist: string|null,
   created_at: string,
   modified_at: string,
 };
@@ -17,6 +18,7 @@ const entitize = (row: dbSchemable) => {
     text: row.text,
     starred: row.starred,
     uuid: row.uuid,
+    tags: row.taglist ? row.taglist.split(',') : null,
     created_at: row.created_at,
     modified_at: row.modified_at,
   });
@@ -25,10 +27,18 @@ const entitize = (row: dbSchemable) => {
 export const selectAll = (executor: dbExecutable) => {
   return async ({ limit }: { limit: number }): Promise<Entry[]|undefined> => {
     const sql = `
-      SELECT *
+      SELECT
+        entries.*
+        ,STRING_AGG(tags.tag, ',') AS taglist
       FROM entries
-      ORDER BY created_at DESC
-      LIMIT $1
+        LEFT JOIN tags
+          ON entries.uuid = tags.uuid
+      GROUP BY
+        entries.uuid
+      ORDER BY
+        entries.created_at DESC
+      LIMIT
+        $1
       ;`;
     const params = [limit];
     try {
