@@ -10,15 +10,15 @@ export class Entry {
 
   constructor({ text, starred, uuid, tags, created_at, modified_at}: {
     text: string,
-    starred: boolean,
-    uuid: string,
+    starred?: boolean,
+    uuid?: string,
     tags: string[]|null,
     created_at?: string, // 2020-11-19T11:48:24.000Z
     modified_at?: string,
   }) {
     this.text = text;
-    this.starred = starred;
-    this.uuid = uuid;
+    this.starred = starred ?? false;
+    this.uuid = uuid ?? uuidv4().replace(/-/g, '');
     this.tags = tags;
     this.created_at = created_at;
     this.modified_at = modified_at;

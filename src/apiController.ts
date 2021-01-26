@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as entriesRepository from './entriesRepository';
 import { executor } from './postgres';
+import { Entry } from './entryEntity';
 
 export const showAllEntries = async (req: Request, res: Response) => {
   const validateRequest = (req: Request) => {
@@ -16,7 +17,11 @@ export const showAllEntries = async (req: Request, res: Response) => {
 };
 
 export const createNewEntry = (req: Request, res: Response) => {
-  console.log(req.body);
-  const entry = new Entry();
+  const entitize = (reqBody: any) => new Entry({
+    text: reqBody.text,
+    tags: reqBody.tags,
+  })
+  console.log(entitize(req.body));
+  
   res.json('Entry is successfly created');
 }
