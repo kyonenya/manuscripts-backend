@@ -2,7 +2,7 @@ import { executor } from './postgres';
 import { QueryResult } from 'pg';
 import { Entry } from './entryEntity';
 
-export type dbExecutable = (sql: string, params?: (string|number)[]) => Promise<QueryResult>;
+export type dbExecutable = (sql: string, params?: (string|number|boolean)[]) => Promise<QueryResult>;
 
 type dbSchemable = {
   text: string,
@@ -49,3 +49,27 @@ export const selectAll = (executor: dbExecutable) => {
     }
   };
 };
+
+export const insertOne = (executor: dbExecutable) => {
+  return async (entry: Entry): Promise<void> => {
+    const sql = `
+      INSERT INTO entries (
+        text
+        ,starred
+        ,uuid
+      )
+      VALUES (
+        $1
+        ,$2
+        ,$3
+      )
+      ;`;
+    const params = [entry.text, entry.starred, entry.uuid];
+    try {
+      const queryResult = await executor(sql, params);
+      console.log(queryResult);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}

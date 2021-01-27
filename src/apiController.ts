@@ -16,12 +16,14 @@ export const showAllEntries = async (req: Request, res: Response) => {
   res.json(data);
 };
 
-export const createNewEntry = (req: Request, res: Response) => {
+export const createNewEntry = async (req: Request, res: Response) => {
   const entitize = (reqBody: any) => new Entry({
     text: reqBody.text,
     tags: reqBody.tags,
   })
-  console.log(entitize(req.body));
+  const dbInvoker = entriesRepository.insertOne(executor);
   
+  const entry = entitize(req.body);
+  await dbInvoker(entry);
   res.json('Entry is successfly created');
 }
