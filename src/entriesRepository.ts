@@ -50,6 +50,30 @@ export const selectAll = (executor: dbExecutable) => {
   };
 };
 
+export const selectOne = (executor: dbExecutable) => {
+  return async ({ uuid }: { uuid: string }): Promise<Entry[]|undefined> => {
+    const sql = `
+      SELECT
+        entries.*
+        ,STRING_AGG(tags.tag, ',') AS taglist
+      FROM entries
+        LEFT JOIN tags
+          ON entries.uuid = tags.uuid
+      GROUP BY
+        entries.uuid
+      HAVING
+        entries.uuid = $1
+      ;`;
+    const params = [uuid];
+    try {
+      const queryResult = await executor(sql, params);
+      return queryResult.rows.map(row => entitize(row));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+};
+
 export const insertOne = (executor: dbExecutable) => {
   return async (entry: Entry): Promise<void> => {
     const sql = `
@@ -73,3 +97,24 @@ export const insertOne = (executor: dbExecutable) => {
     }
   }
 }
+
+
+export const deleteOne = (executor: dbExecutable) => {
+  return async ({ uuid }: { uuid: string }) => {
+    const sql = `
+      DELETE
+      FROM
+        entries
+      WHERE
+        uuid = $1
+      ;`;
+    const params = [uuid];
+
+    try {
+      const queryResult = await executor(sql, params);
+      console.log(queryResult);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+};
