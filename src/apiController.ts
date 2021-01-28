@@ -1,10 +1,10 @@
-import { Request, Response, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import { executor } from './postgres';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
 import { Entry } from './entryEntity';
 
-export const showAllEntries = async (req: Request, res: Response) => {
+export const readAllEntries: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.selectAll(executor);
 
   const params = apiRequest.limitQuery(req);
@@ -20,7 +20,7 @@ export const readOneEntry: RequestHandler = async (req, res) => {
   res.json(data);
 };
 
-export const createNewEntry = async (req: Request, res: Response) => {
+export const createNewEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.insertOne(executor);
 
   const entry = apiRequest.entitize(req.body);
