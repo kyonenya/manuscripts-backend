@@ -6,28 +6,7 @@
   <title>manuscripts</title>
 </head>
 <body>
-  <p><a href="http://localhost:3000/api/entries?limit=3">/api/entries?limit=3</a></p>
-  <button id="create">create</button>
-  <p id="output"></p>
+  <p><a href="/api/entries?limit=3">/api/entries?limit=3</a></p>
+  <p><a href="/test/entries/create">/api/entries?limit=3</a></p>
 </body>
-<script>
-const index = () => {
-  console.log('clicked');
-  document.getElementById('output').textContent = 'clicked';
-  fetch('http://localhost:3000/api/entries/create', {
-    method: 'POST',
-    body: JSON.stringify({
-      title: 'foo',
-      body: 'bar',
-      userId: 1,
-    }),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8',
-    },
-  })
-  .then((response) => response.json())
-  .then((json) => console.log(json));
-}
-document.getElementById('create').addEventListener('click', index);
-</script>
 </html>
