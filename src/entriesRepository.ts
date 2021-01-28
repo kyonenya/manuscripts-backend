@@ -41,6 +41,7 @@ export const selectAll = (executor: dbExecutable) => {
         $1
       ;`;
     const params = [limit];
+
     try {
       const queryResult = await executor(sql, params);
       return queryResult.rows.map(row => entitize(row));
@@ -65,6 +66,7 @@ export const selectOne = (executor: dbExecutable) => {
         entries.uuid = $1
       ;`;
     const params = [uuid];
+
     try {
       const queryResult = await executor(sql, params);
       return queryResult.rows.map(row => entitize(row));
@@ -89,15 +91,14 @@ export const insertOne = (executor: dbExecutable) => {
       )
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
+
     try {
       const queryResult = await executor(sql, params);
       if (!entry.tags) return;
-      for await (const tag of entry.tags) {
-        await tagsRepository.insertOne(executor)({
-          uuid: entry.uuid,
-          tag,
-        });
-      }
+      await tagsRepository.insertAll(executor)({
+        uuid: entry.uuid,
+        tags: entry.tags,
+      });
     } catch (err) {
       console.error(err);
     }
@@ -116,8 +117,14 @@ export const updateOne = (executor: dbExecutable) => {
       WHERE uuid = $3
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
+
     try {
       const queryResult = await executor(sql, params);
+      if (!entry.tags) return;
+      await tagsRepository.updateAll(executor)({
+        uuid: entry.uuid,
+        tags: entry.tags,
+      })
     } catch (err) {
       console.error(err);
     }

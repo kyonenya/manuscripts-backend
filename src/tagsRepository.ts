@@ -20,13 +20,35 @@ export const insertOne = (executor: dbExecutable) => {
       )
     `;
     const params = [uuid, tag];
+
     try {
       const queryResult = await executor(sql, params);
     } catch (err) {
       console.error(err);
     }
   }
-}
+};
+
+export const insertAll =  (executor: dbExecutable) => {
+  return async ({ uuid, tags }: {
+    uuid: string,
+    tags: string[],
+  }) => {
+    for await (const tag of tags) {
+      await insertOne(executor)({ uuid, tag });
+    }
+  }
+};
+
+export const updateAll = (executor: dbExecutable) => {
+  return async ({ uuid, tags }: {
+    uuid: string,
+    tags: string[],
+  }) => {
+    await deleteAll(executor)({ uuid });
+    await insertAll(executor)({ uuid, tags });
+  }
+};
 
 export const deleteAll = (executor: dbExecutable) => {
   return async ({ uuid }: { uuid: string }) => {
