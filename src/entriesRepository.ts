@@ -1,5 +1,5 @@
-import { executor } from './postgres';
 import { QueryResult } from 'pg';
+import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
 export type dbExecutable = (sql: string, params?: (string|number|boolean)[]) => Promise<QueryResult>;
@@ -144,7 +144,7 @@ export const deleteOne = (executor: dbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
-      console.log(queryResult);
+      await tagsRepository.deleteAll(executor)({ uuid });
     } catch (err) {
       console.error(err);
     }
