@@ -11,6 +11,9 @@ router.post('/api/entries/create', apiController.createNewEntry);
 router.put('/api/entries/:uuid', apiController.updateEntry);
 router.delete('/api/entries/:uuid', apiController.deleteEntry);
 router.get('/test/entries/create', testController.testCreate);
+router.get('/test/entries/delete/:uuid', testController.testDelete);
 router.get('/', (req, res) => res.sendFile(path.resolve(__dirname, '..','public', 'index.html')));
 
 export default router;
+
+// 356636c5cb134559a4ebc2884207d709

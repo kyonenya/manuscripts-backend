@@ -76,7 +76,7 @@ export const selectOne = (executor: dbExecutable) => {
 
 export const insertOne = (executor: dbExecutable) => {
   return async (entry: Entry): Promise<void> => {
-    const sql = `
+    const sql1 = `
       INSERT INTO entries (
         text
         ,starred
@@ -88,16 +88,34 @@ export const insertOne = (executor: dbExecutable) => {
         ,$3
       )
       ;`;
-    const params = [entry.text, entry.starred, entry.uuid];
+    const params1 = [entry.text, entry.starred, entry.uuid];
+    const sql2 = `
+      INSERT INTO tags (
+        uuid
+        ,tag
+      )
+      VALUES (
+        $1
+        ,$2
+      )
+    `;
     try {
-      const queryResult = await executor(sql, params);
-      console.log(queryResult);
+      const queryResult = await executor(sql1, params1);
+      if (!entry.tags) return;
+      for await (const tag of entry.tags) {
+        const queryResult = await executor(sql2, [entry.uuid, tag]);
+      }
     } catch (err) {
       console.error(err);
     }
   }
-}
+};
 
+export const updateOne = (executor: dbExecutable) => {
+  return async () => {
+    
+  }
+}
 
 export const deleteOne = (executor: dbExecutable) => {
   return async ({ uuid }: { uuid: string }) => {
