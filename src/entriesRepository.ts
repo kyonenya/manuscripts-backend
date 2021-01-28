@@ -76,7 +76,7 @@ export const selectOne = (executor: dbExecutable) => {
 
 export const insertOne = (executor: dbExecutable) => {
   return async (entry: Entry): Promise<void> => {
-    const sql1 = `
+    const sql = `
       INSERT INTO entries (
         text
         ,starred
@@ -88,22 +88,15 @@ export const insertOne = (executor: dbExecutable) => {
         ,$3
       )
       ;`;
-    const params1 = [entry.text, entry.starred, entry.uuid];
-    const sql2 = `
-      INSERT INTO tags (
-        uuid
-        ,tag
-      )
-      VALUES (
-        $1
-        ,$2
-      )
-    `;
+    const params = [entry.text, entry.starred, entry.uuid];
     try {
-      const queryResult = await executor(sql1, params1);
+      const queryResult = await executor(sql, params);
       if (!entry.tags) return;
       for await (const tag of entry.tags) {
-        const queryResult = await executor(sql2, [entry.uuid, tag]);
+        await tagsRepository.insertOne(executor)({
+          uuid: entry.uuid,
+          tag,
+        });
       }
     } catch (err) {
       console.error(err);

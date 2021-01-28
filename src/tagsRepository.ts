@@ -4,6 +4,30 @@ import { Entry } from './entryEntity';
 
 export type dbExecutable = (sql: string, params?: (string|number|boolean)[]) => Promise<QueryResult>;
 
+export const insertOne = (executor: dbExecutable) => {
+  return async ({ uuid, tag }: {
+    uuid: string,
+    tag: string,
+  }) => {
+    const sql = `
+      INSERT INTO tags (
+        uuid
+        ,tag
+      )
+      VALUES (
+        $1
+        ,$2
+      )
+    `;
+    const params = [uuid, tag];
+    try {
+      const queryResult = await executor(sql, params);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}
+
 export const deleteAll = (executor: dbExecutable) => {
   return async ({ uuid }: { uuid: string }) => {
     const sql = `
