@@ -19,11 +19,13 @@ export const testCreate = (req: Request, res: Response) => {
 
 export const testUpdate: RequestHandler = (req, res) => {
   const { uuid } = apiRequest.uuidParams(req);
-  return fetch('http://localhost:3000/api/entries/update/${uuid}', {
-    method: 'POST',
+  return fetch('http://localhost:3000/api/entries/${uuid}', {
+    method: 'PUT',
     body: JSON.stringify({
       text: '更新された本文',
       tags: ['更新されたタグ1', '更新されたタグ2'],
+      starred: true,
+      uuid: '16798e99c8dc49b59af62353c26313b8',
    }),
     headers: {
       'Content-type': 'application/json; charset=UTF-8',

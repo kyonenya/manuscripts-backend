@@ -112,10 +112,24 @@ export const insertOne = (executor: dbExecutable) => {
 };
 
 export const updateOne = (executor: dbExecutable) => {
-  return async () => {
-    
+  return async (entry: Entry) => {
+    console.log(entry);
+    const sql = `
+      UPDATE
+        entries
+      SET
+        text = $1
+        ,starred = $2
+      WHERE uuid = $3
+      ;`;
+    const params = [entry.text, entry.starred, entry.uuid];
+    try {
+      const queryResult = await executor(sql, params);
+    } catch (err) {
+      console.error(err);
+    }
   }
-}
+};
 
 export const deleteOne = (executor: dbExecutable) => {
   return async ({ uuid }: { uuid: string }) => {

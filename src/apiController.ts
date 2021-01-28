@@ -31,8 +31,8 @@ export const createNewEntry = async (req: Request, res: Response) => {
 export const updateEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.updateOne(executor);
 
-  const args = apiRequest.uuidParams(req);
   const entry = apiRequest.entitize(req.body);
+  await dbInvoker(entry);
   res.json('Entry is successfly updated');
 };
 
