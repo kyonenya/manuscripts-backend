@@ -2,8 +2,8 @@ import { Request, Response, RequestHandler } from 'express';
 import * as apiRequest from './apiRequest';
 import fetch from 'node-fetch';
 
-export const testCreate = (req: Request, res: Response) => {
-  return fetch('http://localhost:3000/api/entries/create', {
+export const testCreate: RequestHandler = (req, res) => {
+  return fetch(`${req.protocol}://${req.get('Host')}/api/entries/create`, {
     method: 'POST',
     body: JSON.stringify({
       text: '本文',
@@ -15,11 +15,11 @@ export const testCreate = (req: Request, res: Response) => {
   })
   .then(response => response.json())
   .then(data => console.log(data));
-}
+};
 
 export const testUpdate: RequestHandler = (req, res) => {
   const { uuid } = apiRequest.uuidParams(req);
-  return fetch('http://localhost:3000/api/entries/${uuid}', {
+  return fetch(`${req.protocol}://${req.get('Host')}/api/entries/${uuid}`, {
     method: 'PUT',
     body: JSON.stringify({
       text: '更新された本文',
@@ -37,7 +37,7 @@ export const testUpdate: RequestHandler = (req, res) => {
 
 export const testDelete: RequestHandler = (req, res) => {
   const { uuid } = apiRequest.uuidParams(req);
-  return fetch(`http://localhost:3000/api/entries/${uuid}`, {
+  return fetch(`${req.protocol}://${req.get('Host')}/api/entries/${uuid}`, {
     method: 'DELETE',
     headers: {
       'Content-type': 'application/json; charset=UTF-8',

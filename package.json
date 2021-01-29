@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "tsc",
-    "mocha": "mocha dist/__tests__",
+    "mocha": "mocha dist/test",
     "start": "node dist/main.js",
     "tsc": "tsc -w"
   },
