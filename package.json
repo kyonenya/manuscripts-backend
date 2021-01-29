@@ -2,9 +2,9 @@
   "name": "manuscripts.herokuapp.com",
   "version": "1.0.0",
   "scripts": {
-    "Either": "node dist/Either.js",
-    "start": "node dist/main.js",
+    "build": "tsc",
     "mocha": "mocha dist/__tests__",
+    "start": "node dist/main.js",
     "tsc": "tsc -w"
   },
   "dependencies": {
