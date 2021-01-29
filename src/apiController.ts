@@ -15,7 +15,7 @@ export const readAllEntries: RequestHandler = async (req, res) => {
 export const readOneEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.selectOne(executor);
 
-  const params = { uuid: req.params.uuid };
+  const params = apiRequest.uuidParams(req);
   const data = await dbInvoker(params);
   res.json(data);
 };
@@ -24,8 +24,8 @@ export const createNewEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.insertOne(executor);
 
   const entry = apiRequest.entitize(req.body);
-  await dbInvoker(entry);
-  res.json('Entry is successfly created');
+  const result = await dbInvoker(entry);
+  res.json(result);
 }
 
 export const updateEntry: RequestHandler = async (req, res) => {

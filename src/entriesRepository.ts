@@ -77,7 +77,7 @@ export const selectOne = (executor: dbExecutable) => {
 };
 
 export const insertOne = (executor: dbExecutable) => {
-  return async (entry: Entry): Promise<void> => {
+  return async (entry: Entry): Promise<any> => {
     const sql = `
       INSERT INTO entries (
         text
@@ -94,11 +94,15 @@ export const insertOne = (executor: dbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
-      if (!entry.tags) return;
-      await tagsRepository.insertAll(executor)({
-        uuid: entry.uuid,
-        tags: entry.tags,
-      });
+      if (entry.tags) {
+        await tagsRepository.insertAll(executor)({
+          uuid: entry.uuid,
+          tags: entry.tags,
+        });
+      }
+      if (queryResult.rowCount === 1) {
+        return entry;
+      }
     } catch (err) {
       console.error(err);
     }

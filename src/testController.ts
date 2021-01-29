@@ -14,7 +14,7 @@ export const testCreate: RequestHandler = (req, res) => {
     },
   })
   .then(response => response.json())
-  .then(data => console.log(data));
+  .then(data => res.json(data));
 };
 
 export const testUpdate: RequestHandler = (req, res) => {
