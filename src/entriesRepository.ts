@@ -94,19 +94,18 @@ export const insertOne = (executor: dbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
-      if (entry.tags) {
-        const tagsResult = await tagsRepository.insertAll(executor)({
-          uuid: entry.uuid,
-          tags: entry.tags,
-        });
-        if (queryResult.rowCount === 1 && entry.tags.length === tagsResult) {
-          return entry;
-        }
-      } else {
-        if (queryResult.rowCount === 1) {
-          return entry;
-        }
+      if (!entry.tags) {
+        return queryResult.rowCount === 1
+          ? entry
+          : undefined;
       }
+      const tagsResult = await tagsRepository.insertAll(executor)({
+        uuid: entry.uuid,
+        tags: entry.tags,
+      });
+      return queryResult.rowCount === 1 && entry.tags.length === tagsResult
+        ? entry
+        : undefined;
     } catch (err) {
       console.error(err);
     }
@@ -127,15 +126,18 @@ export const updateOne = (executor: dbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
-      if (entry.tags) {
-        await tagsRepository.updateAll(executor)({
-          uuid: entry.uuid,
-          tags: entry.tags,
-        });
+      if (!entry.tags) {
+        return queryResult.rowCount === 1
+          ? entry
+          : undefined;
       }
-      if (queryResult.rowCount === 1) {
-        return entry;
-      }
+      const tagsResult = await tagsRepository.updateAll(executor)({
+        uuid: entry.uuid,
+        tags: entry.tags,
+      });
+      return queryResult.rowCount === 1 && tagsResult === true
+        ? entry
+        : undefined;
     } catch (err) {
       console.error(err);
     }
@@ -156,7 +158,8 @@ export const deleteOne = (executor: dbExecutable) => {
     try {
       const queryResult = await executor(sql, params);
       const tagsResult = await tagsRepository.deleteAll(executor)({ uuid });
-      if (queryResult.rowCount === 1 && tagsResult != null) {
+      if (queryResult.rowCount === 1) {
+        // TODO タグの削除判定 タグがない場合とある場合
         return uuid;
       }
     } catch (err) {

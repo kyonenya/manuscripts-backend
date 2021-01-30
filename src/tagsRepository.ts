@@ -50,9 +50,12 @@ export const updateAll = (executor: dbExecutable) => {
   return async ({ uuid, tags }: {
     uuid: string,
     tags: string[],
-  }) => {
-    await deleteAll(executor)({ uuid });
-    await insertAll(executor)({ uuid, tags });
+  }): Promise<boolean|undefined> => {
+    const deleteResult = await deleteAll(executor)({ uuid });
+    const insertResult = await insertAll(executor)({ uuid, tags });
+    if (deleteResult === tags.length && insertResult === tags.length) {
+      return true;
+    }
   }
 };
 
