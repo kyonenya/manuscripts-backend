@@ -110,8 +110,7 @@ export const insertOne = (executor: dbExecutable) => {
 };
 
 export const updateOne = (executor: dbExecutable) => {
-  return async (entry: Entry) => {
-    console.log(entry);
+  return async (entry: Entry): Promise<Entry|undefined> => {
     const sql = `
       UPDATE
         entries
@@ -124,11 +123,15 @@ export const updateOne = (executor: dbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
-      if (!entry.tags) return;
-      await tagsRepository.updateAll(executor)({
-        uuid: entry.uuid,
-        tags: entry.tags,
-      })
+      if (entry.tags) {
+        await tagsRepository.updateAll(executor)({
+          uuid: entry.uuid,
+          tags: entry.tags,
+        });
+      }
+      if (queryResult.rowCount === 1) {
+        return entry;
+      }
     } catch (err) {
       console.error(err);
     }

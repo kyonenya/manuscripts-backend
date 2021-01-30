@@ -32,8 +32,8 @@ export const updateEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.updateOne(executor);
 
   const entry = apiRequest.entitize(req.body);
-  await dbInvoker(entry);
-  res.json('Entry is successfly updated');
+  const result = await dbInvoker(entry);
+  res.json(result);
 };
 
 export const deleteEntry: RequestHandler = async (req, res) => {
