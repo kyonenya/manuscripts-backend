@@ -77,7 +77,7 @@ export const selectOne = (executor: dbExecutable) => {
 };
 
 export const insertOne = (executor: dbExecutable) => {
-  return async (entry: Entry): Promise<any> => {
+  return async (entry: Entry): Promise<Entry|undefined> => {
     const sql = `
       INSERT INTO entries (
         text
@@ -136,7 +136,7 @@ export const updateOne = (executor: dbExecutable) => {
 };
 
 export const deleteOne = (executor: dbExecutable) => {
-  return async ({ uuid }: { uuid: string }) => {
+  return async ({ uuid }: { uuid: string }): Promise<Entry['uuid']|undefined> => {
     const sql = `
       DELETE
       FROM
@@ -149,6 +149,9 @@ export const deleteOne = (executor: dbExecutable) => {
     try {
       const queryResult = await executor(sql, params);
       await tagsRepository.deleteAll(executor)({ uuid });
+      if (queryResult.rowCount === 1) {
+        return uuid;
+      }
     } catch (err) {
       console.error(err);
     }

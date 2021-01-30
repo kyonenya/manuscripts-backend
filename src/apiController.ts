@@ -40,6 +40,6 @@ export const deleteEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.deleteOne(executor);
 
   const args = apiRequest.uuidParams(req);
-  await dbInvoker(args);
-  res.json('Entry is successfly deleted');
+  const result = await dbInvoker(args);
+  res.json(result);
 };
