@@ -17,6 +17,18 @@ export const testCreate: RequestHandler = (req, res) => {
   .then(data => res.json(data));
 };
 
+export const testRead: RequestHandler = (req, res) => {
+  const { uuid } = apiRequest.uuidParams(req);
+  return fetch(`${req.protocol}://${req.get('Host')}/api/entries/${uuid}`, {
+    method: 'GET',
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+  .then(response => response.json())
+  .then(data => console.log(data));
+};
+
 export const testUpdate: RequestHandler = (req, res) => {
   const { uuid } = apiRequest.uuidParams(req);
   return fetch(`${req.protocol}://${req.get('Host')}/api/entries/${uuid}`, {

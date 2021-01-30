@@ -3,60 +3,48 @@ import fetch from 'node-fetch';
 import { Entry } from '../entryEntity';
 
 describe('Api', () => {
-  it('CRUD', async () => {
-    // Create
-    const entry1 = {
+  const uuid = '8cb4f18cccdf4422b54010fd96711ee9';
+  it('Create', async () => {
+    const entry = {
       text: '本文',
       tags: ['タグ1', 'タグ2'],
+      uuid,
     };
-    const created = await fetch(`http://localhost:3000/api/entries/create`, {
+    const result = await fetch(`http://localhost:3000/api/entries/create`, {
       method: 'POST',
-      body: JSON.stringify(entry1),
+      body: JSON.stringify(entry),
       headers: {
         'Content-type': 'application/json; charset=UTF-8'
       },
     })
     .then(response => response.json());
-    assert.equal(created.text, entry1.text);
-    await console.log(created);
-
-    // Update
-    const entry2 = {
+    assert.equal(result.text, entry.text);
+  });
+  it('Update', async () => {
+    const entry = {
       text: '更新された本文',
       tags: ['更新されたタグ1', '更新されたタグ2'],
       starred: true,
-      uuid: created.uuid,
+      uuid,
      };
-    const updated = await fetch(`http://localhost:3000/api/entries/${created.uuid}`, {
+    const result = await fetch(`http://localhost:3000/api/entries/${uuid}`, {
       method: 'PUT',
-      body: JSON.stringify(entry2),
+      body: JSON.stringify(entry),
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
     })
     .then(response => response.json());
-    assert.equal(entry2.uuid, updated.uuid);
-
-//    // Read
-//    const readed = await fetch(`http://localhost:3000/api/entries/${updated.uuid}`, {
-//      method: 'GET',
-//      headers: {
-//        'Content-type': 'application/json; charset=UTF-8',
-//      },
-//    })
-//    .then(response => response.json());
-//    assert.equal(readed.text, entry2.text);
-
-    // Delete
-    const deletedUuid = await fetch(`http://localhost:3000/api/entries/${created.uuid}`, {
+    assert.equal(uuid, result.uuid);
+  });
+  it('Delete', async () => {
+    const result = await fetch(`http://localhost:3000/api/entries/${uuid}`, {
       method: 'DELETE',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
     })
     .then(response => response.json());
-    assert.equal(created.uuid, deletedUuid);
+    assert.equal(uuid, result);
   });
 });
-
-// 8cb4f18cccdf4422b54010fd96711ee4
