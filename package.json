@@ -2,7 +2,7 @@
   "name": "manuscripts.herokuapp.com",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc -w",
+    "build": "tsc",
     "mocha": "mocha dist/test --timeout 20000",
     "start": "node dist/main.js",
     "tsc": "tsc -w"
