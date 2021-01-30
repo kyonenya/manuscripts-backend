@@ -2,6 +2,18 @@ import assert from 'assert';
 import fetch from 'node-fetch';
 import { Entry } from '../entryEntity';
 
+const fetcher = async ({ url, method, body }: {
+  url: string,
+  method: string,
+  body?: unknown,
+}) => await fetch(url, {
+    method,
+    body: JSON.stringify(body),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8'
+    },
+  }).then(response => response.json());
+
 describe('Api', () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee9';
   it('Create', async () => {
@@ -10,14 +22,11 @@ describe('Api', () => {
       tags: ['タグ1', 'タグ2'],
       uuid,
     };
-    const result = await fetch(`http://localhost:3000/api/entries/create`, {
+    const result = await fetcher({
+      url: `http://localhost:3000/api/entries/create`,
       method: 'POST',
-      body: JSON.stringify(entry),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8'
-      },
-    })
-    .then(response => response.json());
+      body: entry,
+    });
     assert.equal(result.text, entry.text);
   });
   it('Update', async () => {
@@ -27,24 +36,18 @@ describe('Api', () => {
       starred: true,
       uuid,
      };
-    const result = await fetch(`http://localhost:3000/api/entries/${uuid}`, {
+    const result = await fetcher({
+      url: `http://localhost:3000/api/entries/${uuid}`,
       method: 'PUT',
-      body: JSON.stringify(entry),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then(response => response.json());
+      body: entry,
+    });
     assert.equal(uuid, result.uuid);
   });
   it('Delete', async () => {
-    const result = await fetch(`http://localhost:3000/api/entries/${uuid}`, {
+    const result = await fetcher({
+      url: `http://localhost:3000/api/entries/${uuid}`,
       method: 'DELETE',
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    })
-    .then(response => response.json());
+    });
     assert.equal(uuid, result);
   });
 });
