@@ -1,10 +1,8 @@
-import { executor } from './postgres';
+import { IDbExecutable } from './postgres';
 import { QueryResult } from 'pg';
 import { Entry } from './entryEntity';
 
-export type dbExecutable = (sql: string, params?: (string|number|boolean)[]) => Promise<QueryResult>;
-
-export const insertOne = (executor: dbExecutable) => {
+export const insertOne = (executor: IDbExecutable) => {
   return async ({ uuid, tag }: {
     uuid: string,
     tag: string,
@@ -32,7 +30,7 @@ export const insertOne = (executor: dbExecutable) => {
   }
 };
 
-export const insertAll =  (executor: dbExecutable) => {
+export const insertAll =  (executor: IDbExecutable) => {
   return async ({ uuid, tags }: {
     uuid: string,
     tags: string[],
@@ -46,7 +44,7 @@ export const insertAll =  (executor: dbExecutable) => {
   }
 };
 
-export const updateAll = (executor: dbExecutable) => {
+export const updateAll = (executor: IDbExecutable) => {
   return async ({ uuid, tags }: {
     uuid: string,
     tags: string[],
@@ -59,7 +57,7 @@ export const updateAll = (executor: dbExecutable) => {
   }
 };
 
-export const deleteAll = (executor: dbExecutable) => {
+export const deleteAll = (executor: IDbExecutable) => {
   return async ({ uuid }: { uuid: string }): Promise<number|undefined> => {
     const sql = `
       DELETE

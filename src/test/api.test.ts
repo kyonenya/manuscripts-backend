@@ -16,6 +16,7 @@ const fetcher = async ({ url, method, body }: {
 
 describe('Api', () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee9';
+  const baseUrl = 'http://localhost:3000';
   it('Create', async () => {
     const entry = {
       text: '本文',
@@ -23,7 +24,7 @@ describe('Api', () => {
       uuid,
     };
     const result = await fetcher({
-      url: `http://localhost:3000/api/entries/create`,
+      url: `${baseUrl}/api/entries/create`,
       method: 'POST',
       body: entry,
     });
@@ -37,7 +38,7 @@ describe('Api', () => {
       uuid,
      };
     const result = await fetcher({
-      url: `http://localhost:3000/api/entries/${uuid}`,
+      url: `${baseUrl}/api/entries/${uuid}`,
       method: 'PUT',
       body: entry,
     });
@@ -45,7 +46,7 @@ describe('Api', () => {
   });
   it('Delete', async () => {
     const result = await fetcher({
-      url: `http://localhost:3000/api/entries/${uuid}`,
+      url: `${baseUrl}/api/entries/${uuid}`,
       method: 'DELETE',
     });
     assert.equal(uuid, result);

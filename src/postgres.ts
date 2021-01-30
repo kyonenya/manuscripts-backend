@@ -1,14 +1,15 @@
 import { Pool, QueryResult } from 'pg';
 import dotenv from 'dotenv';
-import { dbExecutable } from './entriesRepository';
 
 dotenv.config();
+
+export type IDbExecutable = (sql: string, params?: (string|number|boolean)[]) => Promise<QueryResult>;
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
 });
 
-export const executor: dbExecutable = async (sql, params?): Promise<QueryResult> => {
+export const executor: IDbExecutable = async (sql, params?): Promise<QueryResult> => {
   return pool.query(sql, params);
 };
