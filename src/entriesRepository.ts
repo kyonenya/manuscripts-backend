@@ -95,13 +95,17 @@ export const insertOne = (executor: dbExecutable) => {
     try {
       const queryResult = await executor(sql, params);
       if (entry.tags) {
-        await tagsRepository.insertAll(executor)({
+        const tagsResult = await tagsRepository.insertAll(executor)({
           uuid: entry.uuid,
           tags: entry.tags,
         });
-      }
-      if (queryResult.rowCount === 1) {
-        return entry;
+        if (queryResult.rowCount === 1 && entry.tags.length === tagsResult) {
+          return entry;
+        }
+      } else {
+        if (queryResult.rowCount === 1) {
+          return entry;
+        }
       }
     } catch (err) {
       console.error(err);
@@ -151,8 +155,8 @@ export const deleteOne = (executor: dbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
-      await tagsRepository.deleteAll(executor)({ uuid });
-      if (queryResult.rowCount === 1) {
+      const tagsResult = await tagsRepository.deleteAll(executor)({ uuid });
+      if (queryResult.rowCount === 1 && tagsResult != null) {
         return uuid;
       }
     } catch (err) {

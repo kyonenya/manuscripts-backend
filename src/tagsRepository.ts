@@ -8,7 +8,7 @@ export const insertOne = (executor: dbExecutable) => {
   return async ({ uuid, tag }: {
     uuid: string,
     tag: string,
-  }) => {
+  }): Promise<boolean|undefined> => {
     const sql = `
       INSERT INTO tags (
         uuid
@@ -23,6 +23,9 @@ export const insertOne = (executor: dbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
+      if (queryResult.rowCount === 1) {
+        return true;
+      }
     } catch (err) {
       console.error(err);
     }
@@ -33,10 +36,13 @@ export const insertAll =  (executor: dbExecutable) => {
   return async ({ uuid, tags }: {
     uuid: string,
     tags: string[],
-  }) => {
+  }): Promise<number|undefined> => {
+    let count = 0;
     for await (const tag of tags) {
-      await insertOne(executor)({ uuid, tag });
+      const result = await insertOne(executor)({ uuid, tag });
+      if (result === true) count++;
     }
+    return count;
   }
 };
 
@@ -51,7 +57,7 @@ export const updateAll = (executor: dbExecutable) => {
 };
 
 export const deleteAll = (executor: dbExecutable) => {
-  return async ({ uuid }: { uuid: string }) => {
+  return async ({ uuid }: { uuid: string }): Promise<number|undefined> => {
     const sql = `
       DELETE
       FROM
@@ -63,6 +69,9 @@ export const deleteAll = (executor: dbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
+      if (queryResult.rowCount >= 1) {
+        return queryResult.rowCount;
+      }
     } catch (err) {
       console.error(err);
     }
