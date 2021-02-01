@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "tsc",
+    "Either": "node dist/Either.js",
     "mocha": "mocha dist/test --timeout 20000",
     "start": "node dist/main.js",
     "tsc": "tsc -w"

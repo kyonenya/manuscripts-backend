@@ -1,38 +1,38 @@
 type f<T, U> = (x: T) => U;
-type _ = undefined;
 
 class Either<L, R> {
+  static ofLeft = <T>(value: T) => new Either<T, never>({ status: 'Left', value });
+  static ofRight = <T>(value: T) => new Either<never, T>({ status: 'Right', value });
   constructor(
-    private readonly lr: Left<L>|Right<R>
+    private readonly _obj: { status: 'Left', value: L }|{ status: 'Right', value: R }
   ) {}
-  public map = <T>(fn: f<R, T>): this | Either<undefined, T> => { // 返り値をthis型でごまかす
-    return this.lr instanceof Left
-      ? this
-      : ofRight(fn(this.lr.value));
+  public map = <T>(fn: f<R, T>): Either<L, T>=> { // Either<L, never>|Either<never, R> としない
+    return this._obj.status === 'Left'
+      ? Either.ofLeft(this._obj.value)
+      : Either.ofRight(fn(this._obj.value));
   }
-  public isLeft = () => this.lr instanceof Left;
-  public isRight = () => this.lr instanceof Right;
+  public bind = <T>(fn: f<R, T>): L|T => {
+    return this._obj.status === 'Left'
+      ? this._obj.value
+      : fn(this._obj.value);
+  }
 }
 
-const ofRight = <T>(val: T) => new Either<undefined, T>(new Right(val)); // genericsをつけてnewする
-const ofLeft = <T>(val: T) => new Either<T, undefined>(new Left(val));
-const fromNullable = <T>(val: T) => (val === null || val === undefined)
-  ? ofLeft(val)
-  : ofRight(val);
-
-class Left<T> {
-  constructor(
-    public readonly value: T,
-  ){}
-}
-
-class Right<T> {
-  constructor(
-    public readonly value: T,
-  ){}
-}
-
-ofRight(1234)
+Either.ofRight(123)
   .map((x: number) => x * 2)
   .map((x: number) => console.log(x))
+  ;
+
+const decode = (url: string): Either<string, string> => {
+  try {
+    return Either.ofRight(decodeURIComponent(url));
+  } catch (err) {
+    return Either.ofLeft(`${err}`);
+  }
+};
+
+Either.ofRight('valid%3Fid%3D')
+  .map((x: string) => x + '123')
+  .bind(decode)
+  .map(console.log)
   ;
