@@ -51,7 +51,7 @@ export const selectAll = (executor: IDbExecutable) => {
 };
 
 export const selectOne = (executor: IDbExecutable) => {
-  return async ({ uuid }: { uuid: string }): Promise<Entry[]|undefined> => {
+  return async ({ uuid }: { uuid: string }): Promise<Entry|undefined> => {
     const sql = `
       SELECT
         entries.*
@@ -68,7 +68,7 @@ export const selectOne = (executor: IDbExecutable) => {
 
     try {
       const queryResult = await executor(sql, params);
-      return queryResult.rows.map(row => entitize(row));
+      return entitize(queryResult.rows[0]);
     } catch (err) {
       console.error(err);
     }
