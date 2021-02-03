@@ -3,7 +3,7 @@ import * as apiRequest from '../apiRequest';
 import { Entry } from '../entryEntity';
 
 describe('apiRequest', () => {
-  it('entitize without starred', () => {
+  it('without starred', () => {
     assert.deepStrictEqual(apiRequest.entitize({
       text: '本文',
       tags: ['タグ1', 'タグ2'],
