@@ -39,6 +39,15 @@ describe('Api', () => {
     assert.strictEqual(result.text, entry.text);
     assert.deepStrictEqual(result.tags, entry.tags);
   });
+  it('ReadAll limit=3', async () => {
+    const limit = 3;
+    const result = await fetcher({
+      url: `${baseUrl}/api/entries?limit=${limit}`,
+      method: 'GET',
+    });
+    assert.strictEqual(result.length, 3);
+    assert.strictEqual(result[0].text, entry.text);
+  });
   it('Update', async () => {
     const entry2 = {
       text: '更新された本文',
