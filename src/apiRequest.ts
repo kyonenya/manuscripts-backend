@@ -5,6 +5,7 @@ export const entitize = (reqBody: Request['body']) => new Entry({
   text: reqBody.text,
   tags: reqBody.tags,
   uuid: reqBody.uuid,
+  starred: reqBody.starred,
 });
 
 export const limitQuery = (req: Request) => {
