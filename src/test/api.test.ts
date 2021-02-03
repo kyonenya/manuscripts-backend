@@ -17,21 +17,30 @@ const fetcher = async ({ url, method, body }: {
 describe('Api', () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee9';
   const baseUrl = 'http://localhost:3000';
+  const entry = {
+    text: '本文',
+    tags: ['タグ1', 'タグ2'],
+    uuid,
+  };
   it('Create', async () => {
-    const entry = {
-      text: '本文',
-      tags: ['タグ1', 'タグ2'],
-      uuid,
-    };
     const result = await fetcher({
       url: `${baseUrl}/api/entries/create`,
       method: 'POST',
       body: entry,
     });
-    assert.equal(result.text, entry.text);
+    assert.strictEqual(result.text, entry.text);
+    assert.deepStrictEqual(result.tags, entry.tags);
+  });
+  it('ReadOne', async () => {
+    const result = await fetcher({
+      url: `${baseUrl}/api/entries/${uuid}`,
+      method: 'GET',
+    });
+    assert.strictEqual(result.text, entry.text);
+    assert.deepStrictEqual(result.tags, entry.tags);
   });
   it('Update', async () => {
-    const entry = {
+    const entry2 = {
       text: '更新された本文',
       tags: ['更新されたタグ1', '更新されたタグ2'],
       starred: true,
@@ -40,15 +49,17 @@ describe('Api', () => {
     const result = await fetcher({
       url: `${baseUrl}/api/entries/${uuid}`,
       method: 'PUT',
-      body: entry,
+      body: entry2,
     });
-    assert.equal(uuid, result.uuid);
+    assert.strictEqual(result.uuid, uuid);
+    assert.strictEqual(result.text, entry2.text);
+    assert.strictEqual(result.starred, entry2.starred);
   });
   it('Delete', async () => {
     const result = await fetcher({
       url: `${baseUrl}/api/entries/${uuid}`,
       method: 'DELETE',
     });
-    assert.equal(uuid, result);
+    assert.strictEqual(result, uuid);
   });
 });
