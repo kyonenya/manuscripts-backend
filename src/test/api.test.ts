@@ -12,11 +12,15 @@ const fetcher = async ({ url, method, body }: {
     headers: {
       'Content-type': 'application/json; charset=UTF-8'
     },
-  }).then(response => response.json());
+  })
+  .then(response => response.json())
+  .catch(err => console.error(err));
 
 describe('Api', () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee9';
-  const baseUrl = 'http://localhost:3000';
+//  const baseUrl = 'http://localhost:3000';
+  const baseUrl = 'https://manuscripts.herokuapp.com';
+
   const entry = {
     text: '本文',
     tags: ['タグ1', 'タグ2'],
@@ -54,7 +58,7 @@ describe('Api', () => {
       tags: ['更新されたタグ1', '更新されたタグ2'],
       starred: true,
       uuid,
-     };
+    };
     const result = await fetcher({
       url: `${baseUrl}/api/entries/${uuid}`,
       method: 'PUT',
