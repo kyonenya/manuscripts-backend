@@ -18,8 +18,8 @@ const fetcher = async ({ url, method, body }: {
 
 describe('Api', () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee9';
-//  const baseUrl = 'http://localhost:3000';
-  const baseUrl = 'https://manuscripts.herokuapp.com';
+  const baseUrl = 'http://localhost:3000';
+//  const baseUrl = 'https://manuscripts.herokuapp.com';
 
   const entry = {
     text: '本文',
@@ -28,7 +28,7 @@ describe('Api', () => {
   };
   it('Create', async () => {
     const result = await fetcher({
-      url: `${baseUrl}/api/entries/create`,
+      url: `${baseUrl}/api/entries/${uuid}`,
       method: 'POST',
       body: entry,
     });

@@ -3,7 +3,7 @@ import * as apiRequest from './apiRequest';
 import fetch from 'node-fetch';
 
 export const testCreate: RequestHandler = (req, res) => {
-  return fetch(`${req.protocol}://${req.get('Host')}/api/entries/create`, {
+  return fetch(`${req.protocol}://${req.get('Host')}/api/entries/create}`, {
     method: 'POST',
     body: JSON.stringify({
       text: '本文',

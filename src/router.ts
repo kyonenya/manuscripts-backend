@@ -6,7 +6,7 @@ import * as testController from './testController';
 export const router = Router()
   .get('/api/entries', apiController.readAllEntries)
   .get('/api/entries/:uuid', apiController.readOneEntry)
-  .post('/api/entries/create', apiController.createNewEntry)
+  .post('/api/entries/:uuid', apiController.createNewEntry)
   .put('/api/entries/:uuid', apiController.updateEntry)
   .delete('/api/entries/:uuid', apiController.deleteEntry)
   .get('/test/entries/create', testController.testCreate)
