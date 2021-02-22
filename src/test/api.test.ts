@@ -2,24 +2,10 @@ import assert from 'assert';
 import fetch from 'node-fetch';
 import { Entry } from '../entryEntity';
 
-const fetcher = async ({ url, method, body }: {
-  url: string,
-  method: string,
-  body?: unknown,
-}) => await fetch(url, {
-    method,
-    body: JSON.stringify(body),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8'
-    },
-  })
-  .then(response => response.json())
-  .catch(err => console.error(err));
-
 describe('Api', () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee9';
-  const baseUrl = 'http://localhost:3000';
-//  const baseUrl = 'https://manuscripts.herokuapp.com';
+//  const baseUrl = 'http://localhost:3000';
+  const baseUrl = 'https://manuscripts.herokuapp.com';
 
   const entry = {
     text: '本文',
@@ -27,28 +13,34 @@ describe('Api', () => {
     uuid,
   };
   it('Create', async () => {
-    const result = await fetcher({
-      url: `${baseUrl}/api/entries/${uuid}`,
+    const result = await fetch(`${baseUrl}/api/entries/${uuid}`, {
       method: 'POST',
-      body: entry,
-    });
+      body: JSON.stringify(entry),
+      headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    })
+      .then(response => response.json())
+      .catch(err => console.error(err));
     assert.strictEqual(result.text, entry.text);
     assert.deepStrictEqual(result.tags, entry.tags);
   });
   it('ReadOne', async () => {
-    const result = await fetcher({
-      url: `${baseUrl}/api/entries/${uuid}`,
-      method: 'GET',
-    });
+  const result = await fetch(`${baseUrl}/api/entries/${uuid}`, {
+    method: 'GET',
+    headers: { 'Content-type': 'application/json; charset=UTF-8' },
+  })
+    .then(response => response.json())
+    .catch(err => console.error(err));
     assert.strictEqual(result.text, entry.text);
     assert.deepStrictEqual(result.tags, entry.tags);
   });
   it('ReadAll limit=3', async () => {
     const limit = 3;
-    const result = await fetcher({
-      url: `${baseUrl}/api/entries?limit=${limit}`,
+    const result = await fetch(`${baseUrl}/api/entries?limit=${limit}`, {
       method: 'GET',
-    });
+      headers: { 'Content-type': 'application/json; charset=UTF-8' },
+    })
+      .then(response => response.json())
+      .catch(err => console.error(err));
     assert.strictEqual(result.length, 3);
     assert.strictEqual(result[0].text, entry.text);
   });
@@ -59,20 +51,24 @@ describe('Api', () => {
       starred: true,
       uuid,
     };
-    const result = await fetcher({
-      url: `${baseUrl}/api/entries/${uuid}`,
+    const result = await fetch(`${baseUrl}/api/entries/${uuid}`, {
       method: 'PUT',
-      body: entry2,
-    });
+      body: JSON.stringify(entry2),
+      headers: { 'Content-type': 'application/json; charset=UTF-8' }
+    })
+      .then(response => response.json())
+      .catch(err => console.error(err));
     assert.strictEqual(result.uuid, uuid);
     assert.strictEqual(result.text, entry2.text);
     assert.strictEqual(result.starred, entry2.starred);
   });
   it('Delete', async () => {
-    const result = await fetcher({
-      url: `${baseUrl}/api/entries/${uuid}`,
+    const result = await fetch(`${baseUrl}/api/entries/${uuid}`, {
       method: 'DELETE',
-    });
+      headers: { 'Content-type': 'application/json; charset=UTF-8' },
+    })
+      .then(response => response.json())
+      .catch(err => console.error(err));
     assert.strictEqual(result, uuid);
   });
 });
