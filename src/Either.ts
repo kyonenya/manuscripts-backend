@@ -1,6 +1,6 @@
 type f<T, U> = (x: T) => U;
 
-class Either<L, R> {
+export class Either<L, R> {
   static ofLeft = <T>(value: T) => new Either<T, never>({ status: 'Left', value });
   static ofRight = <T>(value: T) => new Either<never, T>({ status: 'Right', value });
   constructor(
@@ -17,22 +17,3 @@ class Either<L, R> {
       : fn(this._obj.value);
   }
 }
-
-Either.ofRight(123)
-  .map((x: number) => x * 2)
-  .map((x: number) => console.log(x))
-  ;
-
-const decode = (url: string): Either<string, string> => {
-  try {
-    return Either.ofRight(decodeURIComponent(url));
-  } catch (err) {
-    return Either.ofLeft(`${err}`);
-  }
-};
-
-Either.ofRight('valid%3Fid%3D')
-  .map((x: string) => x + '123')
-  .bind(decode)
-  .map(console.log)
-  ;
