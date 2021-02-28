@@ -29,6 +29,10 @@ describe('Either', () => {
       .map(x => x.then(x => x))
       .map(x => x.then(x => assert.strictEqual(x, 246)))
       ;
+    Either.ofRight(123)
+      .asyncMap(lazyDouble)
+      .map(x => assert.strictEqual(x, 246))
+      ;
   });
   it('bind then', () => {
     const lazyDecode = async (url: string): Promise<Either<string, string>> => {
