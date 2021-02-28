@@ -10,15 +10,17 @@ export class Either<L, R> {
     return this._obj.status === 'Left'
       ? Either.ofLeft(this._obj.value)
       : Either.ofRight(fn(this._obj.value));
-  }
-//  public awaitMap = <T>(fn: f<R, T>): Either<L, T> => {
-//    const resolved = this._obj.then(x => x);
-//  }
+  };
+  public mapLeft = <T>(fn: f<L, T>): Either<T, R>=> {
+    return this._obj.status === 'Left'
+      ? Either.ofLeft(fn(this._obj.value))
+      : Either.ofRight(this._obj.value);
+  };
   public bind = <T>(fn: f<R, T>): L|T => {
     return this._obj.status === 'Left'
       ? this._obj.value
       : fn(this._obj.value);
-  }
+  };
 }
 
 export class EitherP<L, R> {

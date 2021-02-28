@@ -42,8 +42,11 @@ describe('Either', () => {
     };
     Either.ofRight('valid%3Fid%3D')
       .map(lazyDecode)
-      .map(x => x.then(x => x))
       .map(x => x.then(x => assert.strictEqual(x, 'valid?id=123')))
+      ;
+    Either.ofRight('invalid3s%%F%')
+      .map(lazyDecode)
+//      .mapLeft(x => x.then(x => assert.strictEqual(x, 'valid?id=123')))
       ;
   });
 });
