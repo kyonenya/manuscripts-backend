@@ -59,6 +59,7 @@ describe('Api', () => {
       .then(response => response.json())
       .catch(err => console.error(err));
     assert.strictEqual(result.uuid, uuid);
+    assert.deepStrictEqual(result.tags, entry.tags);
     assert.strictEqual(result.text, entry2.text);
     assert.strictEqual(result.starred, entry2.starred);
   });
