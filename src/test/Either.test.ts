@@ -32,7 +32,8 @@ describe('Either', () => {
   it('async map', () => {
     Either.ofRight(123)
       .map(lazyDouble)
-      .awaitMap(x => assert.strictEqual(x, 246))
+      .awaitMap((x: number) => x * 2)
+      .awaitMap(x => assert.strictEqual(x, 492))
       ;
   });
   it('async flatten', () => {
