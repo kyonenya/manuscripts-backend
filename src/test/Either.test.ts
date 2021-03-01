@@ -40,7 +40,7 @@ describe('Either', () => {
     const lazyDouble = (x: number): Promise<number> => new Promise((resolve, reject) => resolve(x * 2));
     Either.ofRight(123)
       .map(lazyDouble)
-      .awaitMap(x => console.log(x))
+      .awaitMap(x => assert.strictEqual(x, 246))
       ;
   });
   it('async bind', () => {
@@ -55,7 +55,7 @@ describe('Either', () => {
     };
     Either.ofRight('valid%3Fid%3D')
       .map(lazyDecode)
-//      .awaitBind(x => console.log(x))
-      ;  
+      .awaitMap(console.log) // -> Either { status: 'Right', value: 'valid?id='}
+      ;
   });
 });
