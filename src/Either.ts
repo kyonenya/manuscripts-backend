@@ -30,6 +30,15 @@ export class Either<L, R> {
       ? Either.ofLeft(this._obj.value._obj.value)
       : Either.ofRight (this._obj.value._obj.value);
   }
+  public awaitFlatten = () => {
+    if (!(this._obj.value instanceof Promise) || this._obj.status === 'Left') return this;
+    return Either.ofRight(this._obj.value
+      .then(value => {
+        if (!(value instanceof Either)) return value;
+//        console.log(value._obj);
+        return value._obj;
+      }));
+  }
   public bind = <T>(fn: f<R, T>): L|T => {
     return this._obj.status === 'Left'
       ? this._obj.value

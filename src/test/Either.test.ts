@@ -55,7 +55,9 @@ describe('Either', () => {
     };
     Either.ofRight('valid%3Fid%3D')
       .map(lazyDecode)
-      .awaitMap(console.log) // -> Either { status: 'Right', value: 'valid?id='}
+//      .awaitMap(console.log) // -> Either { status: 'Right', value: 'valid?id='}
+      .awaitFlatten()
+      .awaitMap(console.log)
       ;
   });
 });
