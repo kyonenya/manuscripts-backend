@@ -22,6 +22,20 @@ describe('Either', () => {
       .map(x => assert.strictEqual(x, 'valid?id=123'));
       ;
   });
+  it('flatten', () => {
+      Either.ofRight(Either.ofRight(123))
+        .flatten()
+        .map(x => assert.strictEqual(x, 123))
+        ;
+      Either.ofRight(Either.ofLeft('[Error]'))
+        .flatten()
+        .mapLeft(x => assert.strictEqual(x, '[Error]'))
+        ;
+      Either.ofLeft(Either.ofRight(123))
+        .flatten()
+        .mapLeft(x => assert.ok(x instanceof Either))
+        ;
+  });
   it('map then', () => {
     const lazyDouble = (x: number): Promise<number> => new Promise((resolve, reject) => resolve(x * 2));
     Either.ofRight(123)
