@@ -39,15 +39,11 @@ describe('Either', () => {
   it('async map', () => {
     const lazyDouble = (x: number): Promise<number> => new Promise((resolve, reject) => resolve(x * 2));
     Either.ofRight(123)
-      .asyncMap(lazyDouble)
-      .map(x => assert.strictEqual(x, 246))
-      ;
-    Either.ofRight(123)
       .map(lazyDouble)
       .awaitMap(x => console.log(x))
       ;
   });
-  it('bind then', () => {
+  it('async bind', () => {
     const lazyDecode = async (url: string): Promise<Either<string, string>> => {
       const promisedDecode = (url: string): Promise<string> => new Promise((resolve, reject) => resolve(decodeURIComponent(url)));
       try {
@@ -59,7 +55,6 @@ describe('Either', () => {
     };
     Either.ofRight('valid%3Fid%3D')
       .map(lazyDecode)
-      .flatten()
 //      .awaitBind(x => console.log(x))
       ;  
   });
