@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { executor } from './postgres';
+import { pool, executor } from './postgres';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
 import { Entry } from './entryEntity';
@@ -7,8 +7,8 @@ import { Either } from './Either';
 
 export const readAllEntries: RequestHandler = async (req, res) => {
   Either.ofRight(apiRequest.limitQuery(req))
-    .map(entriesRepository.selectAll(executor))
-    .awaitMap((data: Entry) => res.json(data))
+    .map(entriesRepository.selectAll(await pool.connect()))
+    .awaitMap(data => res.json(data))
     ;
 };
 

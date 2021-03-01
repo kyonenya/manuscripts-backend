@@ -1,4 +1,4 @@
-import { QueryResult } from 'pg';
+import { QueryResult, PoolClient } from 'pg';
 import { IDbExecutable } from './postgres';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
@@ -23,7 +23,7 @@ const entitize = (row: dbSchemable) => {
   });
 };
 
-export const selectAll = (executor: IDbExecutable) => {
+export const selectAll = (client: PoolClient) => {
   return async ({ limit }: { limit: number }): Promise<Entry[]|undefined> => {
     const sql = `
       SELECT
@@ -42,7 +42,7 @@ export const selectAll = (executor: IDbExecutable) => {
     const params = [limit];
 
     try {
-      const queryResult = await executor(sql, params);
+      const queryResult = await client.query(sql, params);
       return queryResult.rows.map(row => entitize(row));
     } catch (err) {
       console.error(err);
