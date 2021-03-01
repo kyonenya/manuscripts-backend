@@ -26,6 +26,12 @@ export class Either<L, R> {
       ? this._obj.value
       : fn(this._obj.value);
   };
+  public asyncBind = <T, U>(fn: f<R, Promise<Either<T, U>>>) => {
+    if (this._obj.status === 'Left') {
+      return EitherP.ofLeft(Promise.resolve(this._obj.value));
+    }
+    return fn(this._obj.value);
+  };
 }
 
 export class EitherP<L, R> {
