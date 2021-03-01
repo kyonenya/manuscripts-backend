@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "scripts": {
     "build": "tsc",
-    "Either": "node dist/Either.js",
     "mocha": "mocha dist/test --ignore dist/test/api.test.js",
     "mocha api": "mocha dist/test/api.test.js --timeout 20000",
     "start": "node dist/main.js",

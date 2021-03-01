@@ -21,7 +21,7 @@ export class Either<L, R> {
       ? Either.ofLeft(fn(this._obj.value))
       : Either.ofRight(this._obj.value);
   };
-  public bind = <T>(fn: f<R, T>): L|T => {
+  public bind = <T, U>(fn: f<R, Either<T, U>>): L|Either<T, U> => {
     return this._obj.status === 'Left'
       ? this._obj.value
       : fn(this._obj.value);
