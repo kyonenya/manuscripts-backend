@@ -9,13 +9,6 @@ describe('Either', () => {
         ;
   });
   it('bind', () => {
-    const decode = (url: string): Either<string, string> => {
-      try {
-        return Either.ofRight(decodeURIComponent(url));
-      } catch (err) {
-        return Either.ofLeft(`${err}`);
-      }
-    };
     Either.ofRight('valid%3Fid%3D')
       .map((x: string) => x + '123')
       .bind(decode)
@@ -37,27 +30,38 @@ describe('Either', () => {
         ;
   });
   it('async map', () => {
-    const lazyDouble = (x: number): Promise<number> => new Promise((resolve, reject) => resolve(x * 2));
     Either.ofRight(123)
       .map(lazyDouble)
       .awaitMap(x => assert.strictEqual(x, 246))
       ;
   });
-  it('async bind', () => {
-    const lazyDecode = async (url: string): Promise<Either<string, string>> => {
-      const promisedDecode = (url: string): Promise<string> => new Promise((resolve, reject) => resolve(decodeURIComponent(url)));
-      try {
-        const result = await promisedDecode(url);
-        return Either.ofRight(result);
-      } catch (err) {
-        return Either.ofLeft(`${err}`);
-      }
-    };
+  it('async flatten', () => {
     Either.ofRight('valid%3Fid%3D')
       .map(lazyDecode)
-//      .awaitMap(console.log) // -> Either { status: 'Right', value: 'valid?id='}
+      .awaitMap(x => {
+        assert.ok(x instanceof Either);
+        return x;
+      })
       .awaitFlatten()
-      .awaitMap(console.log)
+      .awaitMap(x => assert.strictEqual(x, { status: 'Right', value: 'valid?id='}))
       ;
   });
 });
+
+const lazyDouble = (x: number): Promise<number> => new Promise((resolve, reject) => resolve(x * 2));
+const decode = (url: string): Either<string, string> => {
+  try {
+    return Either.ofRight(decodeURIComponent(url));
+  } catch (err) {
+    return Either.ofLeft(`${err}`);
+  }
+};
+const lazyDecode = async (url: string): Promise<Either<string, string>> => {
+  const promisedDecode = (url: string): Promise<string> => Promise.resolve(decodeURIComponent(url));
+  try {
+    const result = await promisedDecode(url);
+    return Either.ofRight(result);
+  } catch (err) {
+    return Either.ofLeft(`${err}`);
+  }
+};
