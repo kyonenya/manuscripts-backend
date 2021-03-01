@@ -36,16 +36,15 @@ describe('Either', () => {
         .mapLeft(x => assert.ok(x instanceof Either))
         ;
   });
-  it('map then', () => {
+  it('async map', () => {
     const lazyDouble = (x: number): Promise<number> => new Promise((resolve, reject) => resolve(x * 2));
-    Either.ofRight(123)
-      .map(lazyDouble)
-      .map(x => x.then(x => x))
-      .map(x => x.then(x => assert.strictEqual(x, 246)))
-      ;
     Either.ofRight(123)
       .asyncMap(lazyDouble)
       .map(x => assert.strictEqual(x, 246))
+      ;
+    Either.ofRight(123)
+      .map(lazyDouble)
+      .awaitMap(x => console.log(x))
       ;
   });
   it('bind then', () => {
@@ -58,14 +57,10 @@ describe('Either', () => {
         return Either.ofLeft(`${err}`);
       }
     };
-    const awaiter = (fn: Function) => (px: Promise<any>) => px.then(x => fn(x));
     Either.ofRight('valid%3Fid%3D')
       .map(lazyDecode)
-      .map(awaiter((x: any) => assert.strictEqual(x, 'valid?id=123')))
-      ;
-    Either.ofRight('invalid3s%%F%')
-      .map(lazyDecode)
-//      .mapLeft(x => x.then(x => assert.strictEqual(x, 'valid?id=123')))
-      ;
+      .flatten()
+//      .awaitBind(x => console.log(x))
+      ;  
   });
 });

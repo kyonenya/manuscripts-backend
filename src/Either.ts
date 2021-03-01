@@ -16,6 +16,21 @@ export class Either<L, R> {
       ? EitherP.ofLeft(Promise.resolve(this._obj.value))
       : EitherP.ofRight(fn(this._obj.value));
   };
+  public awaitMap = <T>(fn: f<R, T>) => {
+    if (!(this._obj.value instanceof Promise)) return this;
+    return this._obj.status === 'Left' 
+      ? 123
+      : Either.ofRight(this._obj.value.then(v => fn(v)));
+  }
+  public awaitBind = <T>(fn: f<R, T>) => {
+    if (!(this._obj.value instanceof Promise)) return this;
+    return this._obj.value
+      .then(value => value._obj.status === 'Left'
+        ? value
+        : fn(value)
+      )
+      .then(x => console.log(x))
+  };
   public mapLeft = <T>(fn: f<L, T>): Either<T, R>=> {
     return this._obj.status === 'Left'
       ? Either.ofLeft(fn(this._obj.value))
