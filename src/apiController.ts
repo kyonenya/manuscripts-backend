@@ -3,13 +3,13 @@ import { executor } from './postgres';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
 import { Entry } from './entryEntity';
+import { Either } from './Either';
 
 export const readAllEntries: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.selectAll(executor);
-
-  const params = apiRequest.limitQuery(req);
-  const data = await dbInvoker(params);
-  res.json(data);
+  Either.ofRight(apiRequest.limitQuery(req))
+    .map(entriesRepository.selectAll(executor))
+    .awaitMap((data: Entry) => res.json(data))
+    ;
 };
 
 export const readOneEntry: RequestHandler = async (req, res) => {
