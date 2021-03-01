@@ -44,9 +44,10 @@ describe('Either', () => {
         return Either.ofLeft(`${err}`);
       }
     };
+    const awaiter = (fn: Function) => (px: Promise<any>) => px.then(x => fn(x));
     Either.ofRight('valid%3Fid%3D')
       .map(lazyDecode)
-      .map(x => x.then(x => assert.strictEqual(x, 'valid?id=123')))
+      .map(awaiter((x: any) => assert.strictEqual(x, 'valid?id=123')))
       ;
     Either.ofRight('invalid3s%%F%')
       .map(lazyDecode)
