@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { pool, executor } from './postgres';
+import { pool } from './postgres';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
 import { Entry } from './entryEntity';
@@ -13,7 +13,7 @@ export const readAllEntries: RequestHandler = async (req, res) => {
 };
 
 export const readOneEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.selectOne(executor);
+  const dbInvoker = entriesRepository.selectOne(await pool.connect());
 
   const params = apiRequest.uuidParams(req);
   const data = await dbInvoker(params);
@@ -21,7 +21,7 @@ export const readOneEntry: RequestHandler = async (req, res) => {
 };
 
 export const createNewEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.insertOne(executor);
+  const dbInvoker = entriesRepository.insertOne(await pool.connect());
 
   const entry = apiRequest.entitize(req.body);
   const result = await dbInvoker(entry);
@@ -29,7 +29,7 @@ export const createNewEntry: RequestHandler = async (req, res) => {
 }
 
 export const updateEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.updateOne(executor);
+  const dbInvoker = entriesRepository.updateOne(await pool.connect());
 
   const entry = apiRequest.entitize(req.body);
   const result = await dbInvoker(entry);
@@ -37,7 +37,7 @@ export const updateEntry: RequestHandler = async (req, res) => {
 };
 
 export const deleteEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.deleteOne(executor);
+  const dbInvoker = entriesRepository.deleteOne(await pool.connect());
 
   const args = apiRequest.uuidParams(req);
   const result = await dbInvoker(args);

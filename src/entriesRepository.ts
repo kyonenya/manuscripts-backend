@@ -50,7 +50,7 @@ export const selectAll = (client: PoolClient) => {
   };
 };
 
-export const selectOne = (executor: IDbExecutable) => {
+export const selectOne = (client: PoolClient) => {
   return async ({ uuid }: { uuid: string }): Promise<Entry|undefined> => {
     const sql = `
       SELECT
@@ -67,7 +67,7 @@ export const selectOne = (executor: IDbExecutable) => {
     const params = [uuid];
 
     try {
-      const queryResult = await executor(sql, params);
+      const queryResult = await client.query(sql, params);
       return entitize(queryResult.rows[0]);
     } catch (err) {
       console.error(err);
@@ -75,7 +75,7 @@ export const selectOne = (executor: IDbExecutable) => {
   };
 };
 
-export const insertOne = (executor: IDbExecutable) => {
+export const insertOne = (client: PoolClient) => {
   return async (entry: Entry): Promise<Entry|undefined> => {
     const sql = `
       INSERT INTO entries (
@@ -92,13 +92,13 @@ export const insertOne = (executor: IDbExecutable) => {
     const params = [entry.text, entry.starred, entry.uuid];
 
     try {
-      const queryResult = await executor(sql, params);
+      const queryResult = await client.query(sql, params);
       if (!entry.tags) {
         return queryResult.rowCount === 1
           ? entry
           : undefined;
       }
-      const tagsResult = await tagsRepository.insertAll(executor)({
+      const tagsResult = await tagsRepository.insertAll(client)({
         uuid: entry.uuid,
         tags: entry.tags,
       });
@@ -111,7 +111,7 @@ export const insertOne = (executor: IDbExecutable) => {
   }
 };
 
-export const updateOne = (executor: IDbExecutable) => {
+export const updateOne = (client: PoolClient) => {
   return async (entry: Entry): Promise<Entry|undefined> => {
     const sql = `
       UPDATE
@@ -124,13 +124,13 @@ export const updateOne = (executor: IDbExecutable) => {
     const params = [entry.text, entry.starred, entry.uuid];
 
     try {
-      const queryResult = await executor(sql, params);
+      const queryResult = await client.query(sql, params);
       if (!entry.tags) {
         return queryResult.rowCount === 1
           ? entry
           : undefined;
       }
-      const tagsResult = await tagsRepository.updateAll(executor)({
+      const tagsResult = await tagsRepository.updateAll(client)({
         uuid: entry.uuid,
         tags: entry.tags,
       });
@@ -143,7 +143,7 @@ export const updateOne = (executor: IDbExecutable) => {
   }
 };
 
-export const deleteOne = (executor: IDbExecutable) => {
+export const deleteOne = (client: PoolClient) => {
   return async ({ uuid }: { uuid: string }): Promise<Entry['uuid']|undefined> => {
     const sql = `
       DELETE
@@ -155,8 +155,8 @@ export const deleteOne = (executor: IDbExecutable) => {
     const params = [uuid];
 
     try {
-      const queryResult = await executor(sql, params);
-      const tagsResult = await tagsRepository.deleteAll(executor)({ uuid });
+      const queryResult = await client.query(sql, params);
+      const tagsResult = await tagsRepository.deleteAll(client)({ uuid });
       if (queryResult.rowCount === 1) {
         // TODO タグの削除判定 タグがない場合とある場合
         return uuid;

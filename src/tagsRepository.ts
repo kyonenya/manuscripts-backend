@@ -1,8 +1,8 @@
 import { IDbExecutable } from './postgres';
-import { QueryResult } from 'pg';
+import { QueryResult, PoolClient } from 'pg';
 import { Entry } from './entryEntity';
 
-export const insertOne = (executor: IDbExecutable) => {
+export const insertOne = (client: PoolClient) => {
   return async ({ uuid, tag }: {
     uuid: string,
     tag: string,
@@ -20,7 +20,7 @@ export const insertOne = (executor: IDbExecutable) => {
     const params = [uuid, tag];
 
     try {
-      const queryResult = await executor(sql, params);
+      const queryResult = await client.query(sql, params);
       if (queryResult.rowCount === 1) {
         return true;
       }
@@ -30,34 +30,34 @@ export const insertOne = (executor: IDbExecutable) => {
   }
 };
 
-export const insertAll =  (executor: IDbExecutable) => {
+export const insertAll =  (client: PoolClient) => {
   return async ({ uuid, tags }: {
     uuid: string,
     tags: string[],
   }): Promise<number|undefined> => {
     let count = 0;
     for await (const tag of tags) {
-      const result = await insertOne(executor)({ uuid, tag });
+      const result = await insertOne(client)({ uuid, tag });
       if (result === true) count++;
     }
     return count;
   }
 };
 
-export const updateAll = (executor: IDbExecutable) => {
+export const updateAll = (client: PoolClient) => {
   return async ({ uuid, tags }: {
     uuid: string,
     tags: string[],
   }): Promise<boolean|undefined> => {
-    const deleteResult = await deleteAll(executor)({ uuid });
-    const insertResult = await insertAll(executor)({ uuid, tags });
+    const deleteResult = await deleteAll(client)({ uuid });
+    const insertResult = await insertAll(client)({ uuid, tags });
     if (deleteResult === tags.length && insertResult === tags.length) {
       return true;
     }
   }
 };
 
-export const deleteAll = (executor: IDbExecutable) => {
+export const deleteAll = (client: PoolClient) => {
   return async ({ uuid }: { uuid: string }): Promise<number|undefined> => {
     const sql = `
       DELETE
@@ -69,7 +69,7 @@ export const deleteAll = (executor: IDbExecutable) => {
     const params = [uuid];
 
     try {
-      const queryResult = await executor(sql, params);
+      const queryResult = await client.query(sql, params);
       if (queryResult.rowCount >= 1) {
         return queryResult.rowCount;
       }

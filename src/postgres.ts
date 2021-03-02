@@ -9,7 +9,3 @@ export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false },
 });
-
-export const executor: IDbExecutable = async (sql, params?): Promise<QueryResult> => {
-  return pool.query(sql, params);
-};
