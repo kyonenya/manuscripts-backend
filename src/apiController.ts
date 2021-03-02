@@ -5,10 +5,11 @@ import * as entriesRepository from './entriesRepository';
 import { Either } from './Either';
 
 export const readAllEntries: RequestHandler = async (req, res) => {
-  Either.ofRight(apiRequest.limitQuery(req))
-    .map(entriesRepository.selectAll(await pool.connect()))
-    .awaitMap(data => res.json(data))
-    ;
+  const dbInvoker = entriesRepository.selectAll(await pool.connect());
+
+  const params = apiRequest.limitQuery(req);
+  const data = await dbInvoker(params);
+  res.json(data);
 };
 
 export const readOneEntry: RequestHandler = async (req, res) => {
