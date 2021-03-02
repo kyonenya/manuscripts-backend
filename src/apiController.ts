@@ -2,7 +2,6 @@ import { RequestHandler } from 'express';
 import { pool } from './postgres';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
-import { Entry } from './entryEntity';
 import { Either } from './Either';
 
 export const readAllEntries: RequestHandler = async (req, res) => {

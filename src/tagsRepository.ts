@@ -1,6 +1,5 @@
-import { IDbExecutable } from './postgres';
-import { QueryResult, PoolClient } from 'pg';
-import { Entry } from './entryEntity';
+import { PoolClient } from 'pg';
+
 
 export const insertOne = (client: PoolClient) => {
   return async ({ uuid, tag }: {

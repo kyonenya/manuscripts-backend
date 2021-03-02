@@ -1,6 +1,5 @@
 import assert from 'assert';
 import fetch from 'node-fetch';
-import { Entry } from '../entryEntity';
 
 describe('Api', () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee9';

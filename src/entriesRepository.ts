@@ -1,5 +1,4 @@
-import { QueryResult, PoolClient } from 'pg';
-import { IDbExecutable } from './postgres';
+import { PoolClient } from 'pg';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
