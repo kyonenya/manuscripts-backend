@@ -47,6 +47,15 @@ describe('Either', () => {
       .awaitMap(x => assert.strictEqual(x, { status: 'Right', value: 'valid?id='}))
       ;
   });
+  it('not chained await map', async () => {
+    const decoded = await Either.ofRight('invalid%3F%%%i3D')
+      .map(lazyDecode)
+      .map(eitherP => eitherP.then(either => 
+        either
+          .map(console.error)
+          .mapLeft(x => assert.strictEqual(x, 'URIError: URI malformed'))
+      ));
+  });
 });
 
 const lazyDouble = (x: number): Promise<number> => new Promise((resolve, reject) => resolve(x * 2));
