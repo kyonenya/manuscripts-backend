@@ -1,34 +1,5 @@
 import { PoolClient } from 'pg';
 
-
-export const insertOne = (client: PoolClient) => {
-  return async ({ uuid, tag }: {
-    uuid: string,
-    tag: string,
-  }): Promise<boolean|undefined> => {
-    const sql = `
-      INSERT INTO tags (
-        uuid
-        ,tag
-      )
-      VALUES (
-        $1
-        ,$2
-      )
-    `;
-    const params = [uuid, tag];
-
-    try {
-      const queryResult = await client.query(sql, params);
-      if (queryResult.rowCount === 1) {
-        return true;
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-};
-
 export const selectAll =  (client: PoolClient) => {
   return async ({ uuid }: {
     uuid: string,
@@ -39,27 +10,33 @@ export const selectAll =  (client: PoolClient) => {
         tags
       WHERE
         uuid = $1
-      ;
-    `;
+      ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
     console.log(queryResult.rows);
     return queryResult.rows;
-  }
-}
+  };
+};
 
 export const insertAll =  (client: PoolClient) => {
   return async ({ uuid, tags }: {
     uuid: string,
     tags: string[],
   }): Promise<number|undefined> => {
-    let count = 0;
-    for await (const tag of tags) {
-      const result = await insertOne(client)({ uuid, tag });
-      if (result === true) count++;
-    }
-    return count;
-  }
+    const sql = `
+      INSERT INTO tags (
+        uuid
+        ,tag
+      )
+      VALUES ${tags.map((_, i) => `(
+        $1
+        ,$${2 + i}
+      )`).join(', ')}
+      ;`
+    const params = [uuid, ...tags];
+    const queryResult = await client.query(sql, params);
+    return queryResult.rowCount;
+  };
 };
 
 export const updateAll = (client: PoolClient) => {
@@ -72,7 +49,7 @@ export const updateAll = (client: PoolClient) => {
     if (deleteResult === tags.length && insertResult === tags.length) {
       return true;
     }
-  }
+  };
 };
 
 export const deleteAll = (client: PoolClient) => {
@@ -94,5 +71,20 @@ export const deleteAll = (client: PoolClient) => {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 };
+
+/**
+  INSERT INTO tags (
+    uuid
+    ,tag
+  )
+  VALUES (
+    $1
+    ,$2
+  ), (
+    $1
+    ,$3
+  )
+  ;
+*/
