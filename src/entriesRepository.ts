@@ -118,7 +118,8 @@ export const updateOne = (client: PoolClient) => {
       SET
         text = $1
         ,starred = $2
-      WHERE uuid = $3
+      WHERE
+        uuid = $3
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
 
