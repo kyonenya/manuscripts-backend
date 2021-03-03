@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "tsc",
-    "mocha": "mocha dist/test --ignore dist/test/api.test.js",
+    "mocha": "mocha dist/test --ignore dist/test/api.test.js  --timeout 20000",
     "mocha api": "mocha dist/test/api.test.js --timeout 20000",
     "start": "node dist/main.js",
     "tsc": "tsc -w"
