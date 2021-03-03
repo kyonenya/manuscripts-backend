@@ -12,6 +12,10 @@ describe('tagsRepository', () => {
     const dbInvoker = tagsRepository.insertAll(await pool.connect());
     await dbInvoker({ uuid, tags });
   });
+  it('selectAll', async () => {
+    const dbInvoker = tagsRepository.selectAll(await pool.connect());
+    await dbInvoker({ uuid });
+  });
   it('deleteAll', async () => {
     const dbInvoker = tagsRepository.deleteAll(await pool.connect());
     await dbInvoker({ uuid });

@@ -29,6 +29,25 @@ export const insertOne = (client: PoolClient) => {
   }
 };
 
+export const selectAll =  (client: PoolClient) => {
+  return async ({ uuid }: {
+    uuid: string,
+  }) => {
+    const sql = `
+      SELECT *
+      FROM
+        tags
+      WHERE
+        uuid = $1
+      ;
+    `;
+    const params = [uuid];
+    const queryResult = await client.query(sql, params);
+    console.log(queryResult.rows);
+    return queryResult.rows;
+  }
+}
+
 export const insertAll =  (client: PoolClient) => {
   return async ({ uuid, tags }: {
     uuid: string,
