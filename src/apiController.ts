@@ -1,7 +1,9 @@
 import { RequestHandler } from 'express';
+import createError from 'http-errors';
 import { pool } from './postgres';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
+import * as tagsRepository from './tagsRepository';
 import { Either } from './Either';
 
 export const readAllEntries: RequestHandler = async (req, res) => {
@@ -10,13 +12,14 @@ export const readAllEntries: RequestHandler = async (req, res) => {
   const params = apiRequest.limitQuery(req);
   const data = await dbInvoker(params);
   res.json(data);
+//  console.log(createError(404));
 };
 
 export const readOneEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.selectOne(await pool.connect());
 
-  const params = apiRequest.uuidParams(req);
-  const data = await dbInvoker(params);
+  const uuid = apiRequest.uuidParams(req);
+  const data = await dbInvoker({ uuid });
   res.json(data);
 };
 
@@ -37,9 +40,14 @@ export const updateEntry: RequestHandler = async (req, res) => {
 };
 
 export const deleteEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.deleteOne(await pool.connect());
+  const entriesInvoker = entriesRepository.deleteOne(await pool.connect());
+  const tagsInvoker = tagsRepository.deleteAll(await pool.connect());
 
-  const args = apiRequest.uuidParams(req);
-  const result = await dbInvoker(args);
-  res.json(result);
+  const uuid = apiRequest.uuidParams(req);
+  Promise.all([entriesInvoker({ uuid }), tagsInvoker({ uuid })])
+    .then(results => {
+      console.log(results);
+      res.json(results[0]);
+    })
+    ;
 };

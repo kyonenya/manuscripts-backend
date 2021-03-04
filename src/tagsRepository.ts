@@ -13,7 +13,6 @@ export const selectAll =  (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
-    console.log(queryResult.rows);
     return queryResult.rows;
   };
 };
@@ -46,14 +45,13 @@ export const updateAll = (client: PoolClient) => {
   }): Promise<boolean|undefined> => {
     const deleteResult = await deleteAll(client)({ uuid });
     const insertResult = await insertAll(client)({ uuid, tags });
-    if (deleteResult === tags.length && insertResult === tags.length) {
-      return true;
-    }
+    // TODO: 削除する
+    return true;
   };
 };
 
 export const deleteAll = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }): Promise<number|undefined> => {
+  return async ({ uuid }: { uuid: string }): Promise<string> => {
     const sql = `
       DELETE
       FROM
@@ -62,15 +60,8 @@ export const deleteAll = (client: PoolClient) => {
         uuid = $1
       ;`;
     const params = [uuid];
-
-    try {
-      const queryResult = await client.query(sql, params);
-      if (queryResult.rowCount >= 1) {
-        return queryResult.rowCount;
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    const queryResult = await client.query(sql, params);
+    return uuid;
   };
 };
 

@@ -153,16 +153,7 @@ export const deleteOne = (client: PoolClient) => {
         uuid = $1
       ;`;
     const params = [uuid];
-
-    try {
-      const queryResult = await client.query(sql, params);
-      const tagsResult = await tagsRepository.deleteAll(client)({ uuid });
-      if (queryResult.rowCount === 1) {
-        // TODO タグの削除判定 タグがない場合とある場合
-        return uuid;
-      }
-    } catch (err) {
-      console.error(err);
-    }
+    const queryResult = await client.query(sql, params);
+    return uuid;
   }
 };
