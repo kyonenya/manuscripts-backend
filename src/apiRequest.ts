@@ -13,7 +13,7 @@ export const limitQuery = (req: Request) => {
   return { limit: parseInt(req.query.limit.toString()) };
 };
 
-export const uuidParams = (req: Request): { uuid: string } => {
+export const uuidParams = (req: Request): string => {
   if (!req.params.uuid) throw new Error('uuidが指定されていません');
-  return { uuid: req.params.uuid.toString() };
+  return req.params.uuid.toString();
 };
