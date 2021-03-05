@@ -1,6 +1,7 @@
 import { PoolClient } from 'pg';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
+import { Either } from './Either';
 
 type dbSchemable = {
   text: string,
@@ -23,7 +24,7 @@ const entitize = (row: dbSchemable) => {
 };
 
 export const selectAll = (client: PoolClient) => {
-  return async ({ limit }: { limit: number }): Promise<Entry[]|undefined> => {
+  return async ({ limit }: { limit: number }): Promise<Either<any, Entry[]>> => {
     const sql = `
       SELECT
         entries.*
@@ -42,9 +43,9 @@ export const selectAll = (client: PoolClient) => {
 
     try {
       const queryResult = await client.query(sql, params);
-      return queryResult.rows.map(row => entitize(row));
+      return Either.ofRight(queryResult.rows.map(row => entitize(row)));
     } catch (err) {
-      console.error(err);
+      return Either.ofLeft(err);
     }
   };
 };

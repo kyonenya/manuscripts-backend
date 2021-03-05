@@ -9,10 +9,12 @@ import { Either } from './Either';
 export const readAllEntries: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.selectAll(await pool.connect());
 
-  const params = apiRequest.limitQuery(req);
-  const data = await dbInvoker(params);
-  res.json(data);
-//  console.log(createError(404));
+  const dbEither = await apiRequest.limitQuery(req)
+    .bind(dbInvoker);
+  console.log(dbEither);
+  dbEither.map((data: any) => {
+    res.json(data);
+  });
 };
 
 export const readOneEntry: RequestHandler = async (req, res) => {
