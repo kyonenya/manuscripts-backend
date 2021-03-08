@@ -12,6 +12,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-promise-router": "^4.0.1",
+    "fp-ts": "^2.9.5",
     "helmet": "^4.3.1",
     "http-errors": "^1.8.0",
     "node-fetch": "^2.6.1",

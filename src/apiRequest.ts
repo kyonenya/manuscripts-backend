@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import * as E from 'fp-ts/lib/Either';
 import { Entry } from './entryEntity';
 
 export const entitize = (reqBody: Request['body']) => new Entry({
@@ -9,8 +10,8 @@ export const entitize = (reqBody: Request['body']) => new Entry({
 });
 
 export const limitQuery = (req: Request) => {
-  if (!req.query.limit) throw new Error('件数が指定されていません');
-  return { limit: parseInt(req.query.limit.toString()) };
+  if (!req.query.limit) return E.left(new Error('件数が指定されていません'));
+  return E.right({ limit: parseInt(req.query.limit.toString())});
 };
 
 export const uuidParams = (req: Request): string => {

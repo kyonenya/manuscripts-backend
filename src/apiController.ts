@@ -1,18 +1,21 @@
 import { RequestHandler } from 'express';
 import createError from 'http-errors';
+import * as E from 'fp-ts/lib/Either';
+import * as TE from 'fp-ts/lib/TaskEither';
+import { pipe } from 'fp-ts/lib/function';
 import { pool } from './postgres';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
-import { Either } from './Either';
 
 export const readAllEntries: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.selectAll(await pool.connect());
-
-  const params = apiRequest.limitQuery(req);
-  const data = await dbInvoker(params);
-  res.json(data);
-//  console.log(createError(404));
+  return pipe(
+    E.right(req),
+    E.chain(apiRequest.limitQuery),
+    TE.fromEither,
+    TE.chain(entriesRepository.selectAll(await pool.connect())),
+    TE.map(data => res.json(data)),
+  )();
 };
 
 export const readOneEntry: RequestHandler = async (req, res) => {

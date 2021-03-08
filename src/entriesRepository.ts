@@ -1,4 +1,7 @@
-import { PoolClient } from 'pg';
+import { PoolClient, QueryResult } from 'pg';
+import * as E from 'fp-ts/lib/Either';
+import * as TE from 'fp-ts/lib/TaskEither';
+import { pipe } from 'fp-ts/lib/function';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
@@ -23,7 +26,7 @@ const entitize = (row: dbSchemable) => {
 };
 
 export const selectAll = (client: PoolClient) => {
-  return async ({ limit }: { limit: number }): Promise<Entry[]|undefined> => {
+  return ({ limit }: { limit: number }): TE.TaskEither<unknown, Entry[]> => {
     const sql = `
       SELECT
         entries.*
@@ -40,12 +43,10 @@ export const selectAll = (client: PoolClient) => {
       ;`;
     const params = [limit];
 
-    try {
-      const queryResult = await client.query(sql, params);
-      return queryResult.rows.map(row => entitize(row));
-    } catch (err) {
-      console.error(err);
-    }
+    return pipe(
+      TE.tryCatch(() => client.query(sql, params), err => err),
+      TE.map((qr: QueryResult) => qr.rows.map(row => entitize(row))),
+    );
   };
 };
 
