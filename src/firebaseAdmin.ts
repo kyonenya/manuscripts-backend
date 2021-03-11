@@ -6,8 +6,9 @@ dotenv.config();
 admin.initializeApp({
   credential: admin.credential.cert({
     projectId: 'manuscripts-kyonenya',
-    clientEmail: 'firebase-adminsdk-36vwk@manuscripts-kyonenya.iam.gserviceaccount.com',
-    privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n')
+    clientEmail:
+      'firebase-adminsdk-36vwk@manuscripts-kyonenya.iam.gserviceaccount.com',
+    privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
   }),
 });
 

@@ -3,12 +3,12 @@ import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
 type dbSchemable = {
-  text: string,
-  starred: boolean,
-  uuid: string,
-  taglist: string|null,
-  created_at: string,
-  modified_at: string,
+  text: string;
+  starred: boolean;
+  uuid: string;
+  taglist: string | null;
+  created_at: string;
+  modified_at: string;
 };
 
 const entitize = (row: dbSchemable) => {
@@ -23,7 +23,7 @@ const entitize = (row: dbSchemable) => {
 };
 
 export const selectAll = (client: PoolClient) => {
-  return async ({ limit }: { limit: number }): Promise<Entry[]|undefined> => {
+  return async ({ limit }: { limit: number }): Promise<Entry[] | undefined> => {
     const sql = `
       SELECT
         entries.*
@@ -42,7 +42,7 @@ export const selectAll = (client: PoolClient) => {
 
     try {
       const queryResult = await client.query(sql, params);
-      return queryResult.rows.map(row => entitize(row));
+      return queryResult.rows.map((row) => entitize(row));
     } catch (err) {
       console.error(err);
     }
@@ -50,7 +50,7 @@ export const selectAll = (client: PoolClient) => {
 };
 
 export const selectOne = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }): Promise<Entry|undefined> => {
+  return async ({ uuid }: { uuid: string }): Promise<Entry | undefined> => {
     const sql = `
       SELECT
         entries.*
@@ -75,7 +75,7 @@ export const selectOne = (client: PoolClient) => {
 };
 
 export const insertOne = (client: PoolClient) => {
-  return async (entry: Entry): Promise<Entry|undefined> => {
+  return async (entry: Entry): Promise<Entry | undefined> => {
     const sql = `
       INSERT INTO entries (
         text
@@ -93,9 +93,7 @@ export const insertOne = (client: PoolClient) => {
     try {
       const queryResult = await client.query(sql, params);
       if (!entry.tags) {
-        return queryResult.rowCount === 1
-          ? entry
-          : undefined;
+        return queryResult.rowCount === 1 ? entry : undefined;
       }
       const tagsResult = await tagsRepository.insertAll(client)({
         uuid: entry.uuid,
@@ -107,11 +105,11 @@ export const insertOne = (client: PoolClient) => {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 };
 
 export const updateOne = (client: PoolClient) => {
-  return async (entry: Entry): Promise<Entry|undefined> => {
+  return async (entry: Entry): Promise<Entry | undefined> => {
     const sql = `
       UPDATE
         entries
@@ -126,9 +124,7 @@ export const updateOne = (client: PoolClient) => {
     try {
       const queryResult = await client.query(sql, params);
       if (!entry.tags) {
-        return queryResult.rowCount === 1
-          ? entry
-          : undefined;
+        return queryResult.rowCount === 1 ? entry : undefined;
       }
       const tagsResult = await tagsRepository.updateAll(client)({
         uuid: entry.uuid,
@@ -140,11 +136,15 @@ export const updateOne = (client: PoolClient) => {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 };
 
 export const deleteOne = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }): Promise<Entry['uuid']|undefined> => {
+  return async ({
+    uuid,
+  }: {
+    uuid: string;
+  }): Promise<Entry['uuid'] | undefined> => {
     const sql = `
       DELETE
       FROM
@@ -155,5 +155,5 @@ export const deleteOne = (client: PoolClient) => {
     const params = [uuid];
     const queryResult = await client.query(sql, params);
     return uuid;
-  }
+  };
 };

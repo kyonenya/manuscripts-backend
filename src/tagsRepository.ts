@@ -1,9 +1,7 @@
 import { PoolClient } from 'pg';
 
-export const selectAll =  (client: PoolClient) => {
-  return async ({ uuid }: {
-    uuid: string,
-  }) => {
+export const selectAll = (client: PoolClient) => {
+  return async ({ uuid }: { uuid: string }) => {
     const sql = `
       SELECT *
       FROM
@@ -17,21 +15,28 @@ export const selectAll =  (client: PoolClient) => {
   };
 };
 
-export const insertAll =  (client: PoolClient) => {
-  return async ({ uuid, tags }: {
-    uuid: string,
-    tags: string[],
-  }): Promise<number|undefined> => {
+export const insertAll = (client: PoolClient) => {
+  return async ({
+    uuid,
+    tags,
+  }: {
+    uuid: string;
+    tags: string[];
+  }): Promise<number | undefined> => {
     const sql = `
       INSERT INTO tags (
         uuid
         ,tag
       )
-      VALUES ${tags.map((_, i) => `(
+      VALUES ${tags
+        .map(
+          (_, i) => `(
         $1
         ,$${2 + i}
-      )`).join(', ')}
-      ;`
+      )`
+        )
+        .join(', ')}
+      ;`;
     const params = [uuid, ...tags];
     const queryResult = await client.query(sql, params);
     return queryResult.rowCount;
@@ -39,10 +44,13 @@ export const insertAll =  (client: PoolClient) => {
 };
 
 export const updateAll = (client: PoolClient) => {
-  return async ({ uuid, tags }: {
-    uuid: string,
-    tags: string[],
-  }): Promise<boolean|undefined> => {
+  return async ({
+    uuid,
+    tags,
+  }: {
+    uuid: string;
+    tags: string[];
+  }): Promise<boolean | undefined> => {
     const deleteResult = await deleteAll(client)({ uuid });
     const insertResult = await insertAll(client)({ uuid, tags });
     // TODO: 削除する
