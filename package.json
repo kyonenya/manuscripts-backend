@@ -7,6 +7,7 @@
     "apitest": "mocha dist/test/api.test.js --timeout 20000",
     "start": "node dist/main.js",
     "firebase": "node dist/firebaseAdmin.js",
+    "fmt": "prettier --write 'src/**/*.ts'",
     "tsc": "tsc -w"
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "@types/pg": "^7.14.8",
     "@types/uuid": "^8.3.0",
     "assert": "^2.0.0",
-    "mocha": "^8.2.1"
+    "mocha": "^8.2.1",
+    "prettier": "^2.2.1"
   }
 }
