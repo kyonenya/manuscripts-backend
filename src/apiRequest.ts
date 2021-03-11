@@ -1,5 +1,6 @@
 import { Request } from 'express';
 import { Entry } from './entryEntity';
+import admin, { uid } from './firebaseAdmin';
 
 export const entitize = (reqBody: Request['body']) => new Entry({
   text: reqBody.text,
@@ -7,6 +8,13 @@ export const entitize = (reqBody: Request['body']) => new Entry({
   uuid: reqBody.uuid,
   starred: reqBody.starred,
 });
+
+export const validateToken = async (idToken: string) => {
+  const decoded = await admin.auth().verifyIdToken(idToken);
+  if (decoded.uid !== uid) {
+    throw new Error('認証エラー：異なるuidです');
+  }
+};
 
 export const limitQuery = (req: Request) => {
   if (!req.query.limit) throw new Error('件数が指定されていません');

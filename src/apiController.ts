@@ -9,6 +9,8 @@ import { Either } from './Either';
 export const readAllEntries: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.selectAll(await pool.connect());
 
+  const bearerToken = req.headers['authorization']!.split(' ')[1];
+  apiRequest.validateToken(bearerToken);
   const params = apiRequest.limitQuery(req);
   const data = await dbInvoker(params);
   res.json(data);
