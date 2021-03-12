@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "tsc",
-    "mocha": "mocha dist/test --ignore dist/test/api.test.js  --timeout 20000",
-    "apitest": "mocha dist/test/api.test.js --timeout 20000",
+    "mocha": "mocha dist/test --ignore dist/test/api.test.js  --timeout 30000",
+    "apitest": "mocha dist/test/api.test.js --timeout 30000",
     "start": "node dist/main.js",
     "firebase": "node dist/firebaseAdmin.js",
     "fmt": "prettier --write 'src/**/*.ts'",
