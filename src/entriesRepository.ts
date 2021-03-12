@@ -144,7 +144,7 @@ export const deleteOne = (client: PoolClient) => {
     uuid,
   }: {
     uuid: string;
-  }): Promise<Entry['uuid'] | undefined> => {
+  }): Promise<Entry['uuid'] | null> => {
     const sql = `
       DELETE
       FROM
@@ -154,6 +154,7 @@ export const deleteOne = (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
+    if (queryResult.rowCount !== 1) return null;
     return uuid;
   };
 };

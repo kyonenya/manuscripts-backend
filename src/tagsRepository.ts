@@ -59,7 +59,7 @@ export const updateAll = (client: PoolClient) => {
 };
 
 export const deleteAll = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }): Promise<string> => {
+  return async ({ uuid }: { uuid: string }): Promise<string | undefined> => {
     const sql = `
       DELETE
       FROM
@@ -69,6 +69,7 @@ export const deleteAll = (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
+    if (queryResult.rowCount === 0) return undefined;
     return uuid;
   };
 };
