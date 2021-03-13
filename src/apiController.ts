@@ -6,15 +6,12 @@ import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
 import { Either } from './Either';
 
-export const readAllEntries: RequestHandler = async (req, res) => {
+export const readAllEntries: RequestHandler = async (req, res, next) => {
   const dbInvoker = entriesRepository.selectAll(await pool.connect());
-
-  const bearerToken = req.headers['authorization']!.split(' ')[1];
-  apiRequest.validateToken(bearerToken);
+  await apiRequest.validateToken(req);
   const params = apiRequest.limitQuery(req);
   const data = await dbInvoker(params);
   res.json(data);
-  //  console.log(createError(404));
 };
 
 export const readOneEntry: RequestHandler = async (req, res) => {
