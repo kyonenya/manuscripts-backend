@@ -1,17 +1,17 @@
 import assert from 'assert';
 import fetch from 'node-fetch';
-import admin, { uid } from '../firebaseAdmin';
+import admin, { uid, getIdToken } from '../firebaseAdmin';
 
 describe('Api', async () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee7';
   const baseUrl = 'http://localhost:3000';
   //  const baseUrl = 'https://manuscripts.herokuapp.com';
-
   const entry = {
     text: '本文',
     tags: ['タグ1', 'タグ2'],
     uuid,
   };
+
   it('Create', async () => {
     const result = await fetch(`${baseUrl}/api/entries/${uuid}`, {
       method: 'POST',
@@ -77,24 +77,3 @@ describe('Api', async () => {
     assert.strictEqual(result, uuid);
   });
 });
-
-const getIdToken = async (uid: string): Promise<string> => {
-  const apiKey = 'AIzaSyAttARzXFbAreQhdIaAKPMsn6bPzbTMA8o';
-  const customToken = await admin.auth().createCustomToken(uid);
-  const res = await fetch(
-    `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${apiKey}`,
-    {
-      method: 'POST',
-      body: JSON.stringify({
-        token: customToken,
-        returnSecureToken: true,
-      }),
-      headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-      },
-    }
-  )
-    .then((response) => response.json())
-    .catch((err) => console.error(err));
-  return res.idToken;
-};
