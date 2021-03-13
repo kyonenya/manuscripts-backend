@@ -1,6 +1,6 @@
 import assert from 'assert';
 import fetch from 'node-fetch';
-import admin, { uid, getIdToken } from '../firebaseAdmin';
+import { uid, getIdToken } from '../firebaseAdmin';
 
 describe('Api', async () => {
   const uuid = '8cb4f18cccdf4422b54010fd96711ee7';

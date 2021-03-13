@@ -1,10 +1,10 @@
 import assert from 'assert';
-import admin, { uid, getIdToken } from '../firebaseAdmin';
+import { authApp, uid, getIdToken } from '../firebaseAdmin';
 
 describe('firebaseAdmin', () => {
   it('validate', async () => {
     const idToken = await getIdToken(uid);
-    const decoded = await admin.auth().verifyIdToken(idToken);
+    const decoded = await authApp.verifyIdToken(idToken);
     assert.strictEqual(decoded.uid, uid);
   });
 });
