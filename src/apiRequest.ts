@@ -1,6 +1,7 @@
 import { Request } from 'express';
 import { Entry } from './entryEntity';
-import admin, { uid } from './firebaseAdmin';
+import /* admin, */ { uid } from './firebaseAdmin';
+import admin from 'firebase-admin';
 
 export const entitize = (reqBody: Request['body']) =>
   new Entry({
@@ -11,10 +12,19 @@ export const entitize = (reqBody: Request['body']) =>
   });
 
 export const validateToken = async (req: Request) => {
-  if (!req.headers['authorization']) {
-    throw new Error('認証エラー: idトークンが空です');
-  }
-  const idToken = req.headers['authorization'].split(' ')[1];
+  admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: 'manuscripts-kyonenya',
+      clientEmail:
+        'firebase-adminsdk-36vwk@manuscripts-kyonenya.iam.gserviceaccount.com',
+      privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+    }),
+  });
+//  if (!req.headers['authorization']) {
+//    throw new Error('認証エラー: idトークンが空です');
+//  }
+//  const idToken = req.headers['authorization'].split(' ')[1];
+  const idToken = '';
   const decoded = await admin.auth().verifyIdToken(idToken);
   if (decoded.uid !== uid) {
     throw new Error('認証エラー：異なるuidです');

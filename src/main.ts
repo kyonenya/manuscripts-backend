@@ -1,6 +1,9 @@
 import express from 'express';
 import helmet from 'helmet';
 import { router } from './router';
+import admin from 'firebase-admin';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const port = process.env.PORT || 3000;
 
