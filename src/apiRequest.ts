@@ -11,18 +11,15 @@ export const entitize = (reqBody: Request['body']) =>
   });
 
 export const validateToken = async (req: Request) => {
-  console.log(req.headers['authorization']);
   if (!req.headers['authorization']) {
-    console.log('空');
     throw new Error('認証エラー: idトークンが空です');
-    return;
   }
   const idToken = req.headers['authorization'].split(' ')[1];
   const decoded = await admin.auth().verifyIdToken(idToken);
   if (decoded.uid !== uid) {
     throw new Error('認証エラー：異なるuidです');
-    return;
   }
+  return req;
 };
 
 export const limitQuery = (req: Request) => {

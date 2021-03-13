@@ -1,8 +1,20 @@
 import assert from 'assert';
 import * as apiRequest from '../apiRequest';
+import { getIdToken, uid } from '../firebaseAdmin';
 import { Entry } from '../entryEntity';
 
 describe('apiRequest', () => {
+  it('validate', async () => {
+    const idToken = await getIdToken(uid);
+    const req = {
+      headers: {
+        'authorization': `Bearer: ${idToken}`,
+      }
+    };
+    // @ts-ignore
+    const result = await apiRequest.validateToken(req);
+    console.log(result);
+  });
   it('starred', () => {
     assert.deepStrictEqual(
       apiRequest.entitize({
@@ -21,3 +33,4 @@ describe('apiRequest', () => {
     );
   });
 });
+
