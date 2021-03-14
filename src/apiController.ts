@@ -6,7 +6,7 @@ import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
 import { Either } from './Either';
 
-export const readAllEntries: RequestHandler = async (req, res, next) => {
+export const readAllEntries: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.selectAll(await pool.connect());
 
   await apiRequest.validateToken(req);
