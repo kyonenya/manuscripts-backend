@@ -6,7 +6,7 @@ import { RequestHandler } from 'express';
  */
 export const allowCors: RequestHandler = (req, res, next) => {
   res
-    .header('Access-Control-Allow-Origin', req.headers.origin)
+    .header('Access-Control-Allow-Origin', '*')
     .header(
       'Access-Control-Allow-Methods',
       'GET, POST, PUT, DELETE, OPTIONS'
