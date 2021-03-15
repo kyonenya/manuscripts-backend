@@ -1,5 +1,4 @@
 import express from 'express';
-import helmet from 'helmet';
 import admin from 'firebase-admin';
 import dotenv from 'dotenv';
 import { router } from './router';
@@ -10,7 +9,6 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 
 const app = express()
-  .use(helmet())
   .use(allowCors)
   .options('*', (req, res) => res.sendStatus(200)) // preflight
   .use(express.urlencoded({ extended: false })) // analyze request body
