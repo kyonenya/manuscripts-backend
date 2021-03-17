@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { pool } from '../postgres';
+import { getClient } from '../postgres';
 import * as tagsRepository from '../tagsRepository';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,15 +9,15 @@ describe('tagsRepository', () => {
   console.log(`testing... uuid:${uuid}`);
 
   it('insertAll', async () => {
-    const dbInvoker = tagsRepository.insertAll(await pool.connect());
+    const dbInvoker = tagsRepository.insertAll(await getClient());
     await dbInvoker({ uuid, tags });
   });
   it('selectAll', async () => {
-    const dbInvoker = tagsRepository.selectAll(await pool.connect());
+    const dbInvoker = tagsRepository.selectAll(await getClient());
     await dbInvoker({ uuid });
   });
   it('deleteAll', async () => {
-    const dbInvoker = tagsRepository.deleteAll(await pool.connect());
+    const dbInvoker = tagsRepository.deleteAll(await getClient());
     await dbInvoker({ uuid });
   });
 });
