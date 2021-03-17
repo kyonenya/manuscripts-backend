@@ -1,13 +1,13 @@
 import { RequestHandler } from 'express';
 import createError from 'http-errors';
-import { pool } from './postgres';
+import { pool, getClient } from './postgres';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
 import { Either } from './Either';
 
 export const readAllEntries: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.selectAll(await pool.connect());
+  const dbInvoker = entriesRepository.selectAll(await getClient());
 
   await apiRequest.validateToken(req);
   const params = apiRequest.limitQuery(req);
