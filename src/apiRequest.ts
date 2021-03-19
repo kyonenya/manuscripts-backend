@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import createError from 'http-errors';
 import { Entry } from './entryEntity';
 import { authApp, uid } from './firebaseAdmin';
 
@@ -12,12 +13,12 @@ export const entitize = (reqBody: Request['body']) =>
 
 export const validateToken = async (req: Request) => {
   if (!req.headers['authorization']) {
-    throw new Error('認証エラー: idトークンが空です');
+    throw new createError.Unauthorized('認証エラー: idトークンが空です');
   }
   const idToken = req.headers['authorization'].split(' ')[1];
   const decoded = await authApp.verifyIdToken(idToken);
   if (decoded.uid !== uid) {
-    throw new Error('認証エラー：異なるuidです');
+    throw new createError.Unauthorized('認証エラー：異なるuidです');
   }
   return req;
 };
