@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
 import createError from 'http-errors';
 import { getClient } from './postgres';
+import * as entryUseCase from './entryUseCase';
 import * as apiRequest from './apiRequest';
 import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
@@ -43,14 +44,9 @@ export const updateEntry: RequestHandler = async (req, res) => {
 };
 
 export const deleteEntry: RequestHandler = async (req, res) => {
-  const entriesInvoker = entriesRepository.deleteOne(await getClient());
-  const tagsInvoker = tagsRepository.deleteAll(await getClient());
-
-  await apiRequest.validateToken(req);
-  const uuid = apiRequest.uuidParams(req);
-  Promise.all([entriesInvoker({ uuid }), tagsInvoker({ uuid })]).then(
-    (results) => {
-      res.json(results[0]);
-    }
-  );
+  const result = await entryUseCase.deleteOneEntry({
+    client: await getClient(),
+    uuid: apiRequest.uuidParams(req),
+  });
+  res.json(result);
 };
