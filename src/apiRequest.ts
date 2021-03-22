@@ -1,6 +1,5 @@
 import { Request } from 'express';
 import createError from 'http-errors';
-import Boom from '@hapi/boom';
 import { Entry } from './entryEntity';
 import { authApp, uid } from './firebaseAdmin';
 
