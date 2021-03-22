@@ -10,7 +10,7 @@ describe('tagsRepository', () => {
 
   it('insertAll', async () => {
     const dbInvoker = tagsRepository.insertAll(await getClient());
-    await dbInvoker({ uuid, tags });
+    await dbInvoker(tags, uuid);
   });
   it('selectAll', async () => {
     const dbInvoker = tagsRepository.selectAll(await getClient());

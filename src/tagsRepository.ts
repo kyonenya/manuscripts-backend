@@ -16,13 +16,7 @@ export const selectAll = (client: PoolClient) => {
 };
 
 export const insertAll = (client: PoolClient) => {
-  return async ({
-    uuid,
-    tags,
-  }: {
-    uuid: string;
-    tags: string[] | null;
-  }): Promise<void> => {
+  return async (tags: string[]|null, uuid: string): Promise<void> => {
     if (!tags) return;
     const sql = `
       INSERT INTO tags (
@@ -53,7 +47,7 @@ export const updateAll = (client: PoolClient) => {
     tags: string[];
   }): Promise<boolean | undefined> => {
     const deleteResult = await deleteAll(client)({ uuid });
-    const insertResult = await insertAll(client)({ uuid, tags });
+    const insertResult = await insertAll(client)(tags, uuid);
     // TODO: 削除する
     return true;
   };

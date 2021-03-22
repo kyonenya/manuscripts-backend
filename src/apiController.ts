@@ -28,8 +28,9 @@ export const readOneEntry: RequestHandler = async (req, res) => {
 export const createNewEntry: RequestHandler = async (req, res) => {
   await apiRequest.validateToken(req);
   const result = await entryUseCase.createOneEntry({
-    client: await getClient(),
     entry: apiRequest.entitize(req.body),
+    entriesInvoker: entriesRepository.insertOne(await getClient()),
+    tagsInvoker: tagsRepository.insertAll(await getClient()),
   });
   res.json(result);
 };

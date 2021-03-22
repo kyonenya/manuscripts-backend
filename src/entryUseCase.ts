@@ -3,14 +3,12 @@ import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
-export const createOneEntry = ({ client, entry }: {
-  client: PoolClient,
+export const createOneEntry = ({ entry, entriesInvoker, tagsInvoker }: {
   entry: Entry,
+  entriesInvoker: (entry: Entry) => Promise<void>,
+  tagsInvoker: (tags: string[]|null, uuid: string) => Promise<void>,
 }): Promise<Entry> => {
-  const entriesInvoker = entriesRepository.insertOne(client);
-  const tagsInvoker = tagsRepository.insertAll(client);
-  return Promise
-    .all([entriesInvoker(entry), tagsInvoker({ uuid: entry.uuid, tags: entry.tags })])
+  return Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)])
     .then(_ => entry)
 };
 
