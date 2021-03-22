@@ -21,8 +21,9 @@ export const insertAll = (client: PoolClient) => {
     tags,
   }: {
     uuid: string;
-    tags: string[];
-  }): Promise<number | undefined> => {
+    tags: string[] | null;
+  }): Promise<void> => {
+    if (!tags) return;
     const sql = `
       INSERT INTO tags (
         uuid
@@ -39,7 +40,7 @@ export const insertAll = (client: PoolClient) => {
       ;`;
     const params = [uuid, ...tags];
     const queryResult = await client.query(sql, params);
-    return queryResult.rowCount;
+    if (queryResult.rowCount !== tags.length) throw new Error('unexpected rowCount');
   };
 };
 

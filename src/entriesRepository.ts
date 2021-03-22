@@ -75,7 +75,7 @@ export const selectOne = (client: PoolClient) => {
 };
 
 export const insertOne = (client: PoolClient) => {
-  return async (entry: Entry): Promise<Entry | undefined> => {
+  return async (entry: Entry): Promise<void> => {
     const sql = `
       INSERT INTO entries (
         text
@@ -89,22 +89,8 @@ export const insertOne = (client: PoolClient) => {
       )
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
-
-    try {
-      const queryResult = await client.query(sql, params);
-      if (!entry.tags) {
-        return queryResult.rowCount === 1 ? entry : undefined;
-      }
-      const tagsResult = await tagsRepository.insertAll(client)({
-        uuid: entry.uuid,
-        tags: entry.tags,
-      });
-      return queryResult.rowCount === 1 && entry.tags.length === tagsResult
-        ? entry
-        : undefined;
-    } catch (err) {
-      console.error(err);
-    }
+    const queryResult = await client.query(sql, params);
+    if (queryResult.rowCount !== 1) throw new Error('invalid rowCount');
   };
 };
 

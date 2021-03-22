@@ -26,11 +26,11 @@ export const readOneEntry: RequestHandler = async (req, res) => {
 };
 
 export const createNewEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.insertOne(await getClient());
-
   await apiRequest.validateToken(req);
-  const entry = apiRequest.entitize(req.body);
-  const result = await dbInvoker(entry);
+  const result = await entryUseCase.createOneEntry({
+    client: await getClient(),
+    entry: apiRequest.entitize(req.body),
+  });
   res.json(result);
 };
 
