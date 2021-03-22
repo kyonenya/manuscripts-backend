@@ -1,4 +1,5 @@
 import { RequestHandler, ErrorRequestHandler } from 'express';
+import { HttpError } from 'http-errors';
 
 export const notFound: RequestHandler = (req, res) => {
   res.status(404);
@@ -6,15 +7,10 @@ export const notFound: RequestHandler = (req, res) => {
 };
 
 export const internalError: ErrorRequestHandler = (err, req, res, next) =>{
-  if (err.statusCode >= 500) {
-    return res.status(500).json({
-      error: {
-        name: err.name,
-      },
-    });
-  }
+  console.error(err);
   return res.status(err.statusCode).json({
     error: {
+      statusCode: err.statusCode,
       name: err.name,
       message: err.message,
     },
