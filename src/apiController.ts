@@ -1,4 +1,4 @@
-import { RequestHandler } from 'express';
+import { RequestHandler, Request, Response } from 'express';
 import * as TE from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function';
 import { tap } from './functions';
@@ -28,8 +28,8 @@ export const readOneEntry: RequestHandler = async (req, res) => {
   res.json(data);
 };
 
-export const createNewEntry: RequestHandler = async (req, res) => {
-  pipe(
+export const createNewEntry = async (req: Request, res: Response) => {
+  return pipe(
     TE.right(req),
     TE.chain(apiRequest.validateToken2),
     TE.map(apiRequest.entitize),
@@ -38,7 +38,7 @@ export const createNewEntry: RequestHandler = async (req, res) => {
       tagsInvoker: tagsRepository.insertAll(await getClient()),
     })),
     TE.map(result => res.json(result))
-  )();
+  );
 };
 
 export const updateEntry: RequestHandler = async (req, res) => {
