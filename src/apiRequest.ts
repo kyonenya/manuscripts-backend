@@ -1,3 +1,6 @@
+import * as TE from 'fp-ts/lib/TaskEither'
+import * as E from 'fp-ts/lib/Either'
+import * as T from 'fp-ts/lib/Task';  
 import { Request } from 'express';
 import Boom from '@hapi/boom';
 import { Entry } from './entryEntity';
@@ -21,6 +24,18 @@ export const validateToken = async (req: Request) => {
     throw Boom.unauthorized('認証エラー: 異なるuidです');
   }
   return req;
+};
+
+export const validateToken2 = (req: Request): TE.TaskEither<any, any> => async () => {
+  if (!req.headers['authorization']) {
+    return E.left(Boom.unauthorized('認証エラー: idトークンが空です'));
+  }
+  const idToken = req.headers['authorization'].split(' ')[1];
+  const decoded = await authApp.verifyIdToken(idToken);
+  if (decoded.uid !== uid) {
+    E.left(Boom.unauthorized('認証エラー: 異なるuidです'));
+  }
+  return E.right(req);
 };
 
 export const limitQuery = (req: Request) => {

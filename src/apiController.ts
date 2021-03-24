@@ -1,4 +1,7 @@
 import { RequestHandler } from 'express';
+import * as TE from 'fp-ts/lib/TaskEither'
+import { pipe } from 'fp-ts/lib/function';
+import { tap } from './functions';
 import createError from 'http-errors';
 import { getClient } from './postgres';
 import * as entryUseCase from './entryUseCase';
@@ -26,13 +29,17 @@ export const readOneEntry: RequestHandler = async (req, res) => {
 };
 
 export const createNewEntry: RequestHandler = async (req, res) => {
-  await apiRequest.validateToken(req);
-  const result = await entryUseCase.createOneEntry({
-    entry: apiRequest.entitize(req.body),
-    entriesInvoker: entriesRepository.insertOne(await getClient()),
-    tagsInvoker: tagsRepository.insertAll(await getClient()),
-  });
-  res.json(result);
+  pipe(
+    TE.right(req.body),
+//    TE.chain(apiRequest.validateToken2),
+    TE.map(apiRequest.entitize),
+    TE.chain(entryUseCase.createOneEntry2({
+      entriesInvoker: entriesRepository.insertOne(await getClient()),
+      tagsInvoker: tagsRepository.insertAll(await getClient()),
+    })),
+//    TE.map(tap(console.log)),
+    TE.map(result => res.json(result))
+  )();
 };
 
 export const updateEntry: RequestHandler = async (req, res) => {

@@ -1,3 +1,5 @@
+import * as TE from 'fp-ts/lib/TaskEither'
+import { identity } from 'fp-ts/lib/function';
 import { PoolClient } from 'pg';
 import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
@@ -10,6 +12,16 @@ export const createOneEntry = ({ entry, entriesInvoker, tagsInvoker }: {
 }): Promise<Entry> => {
   return Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)])
     .then(_ => entry)
+};
+
+export const createOneEntry2 = ({ entriesInvoker, tagsInvoker }: {
+  entriesInvoker: (entry: Entry) => Promise<void>,
+  tagsInvoker: (tags: string[]|null, uuid: string) => Promise<void>,
+}) => (entry: Entry) : TE.TaskEither<any, any> => {
+  return TE.tryCatch(
+    () => Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)]).then(_ => entry),
+    identity
+  )
 };
 
 export const deleteOneEntry = ({ client, uuid }: {
