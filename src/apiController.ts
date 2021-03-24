@@ -31,13 +31,12 @@ export const readOneEntry: RequestHandler = async (req, res) => {
 export const createNewEntry: RequestHandler = async (req, res) => {
   pipe(
     TE.right(req),
-//    TE.chain(apiRequest.validateToken2),
+    TE.chain(apiRequest.validateToken2),
     TE.map(apiRequest.entitize),
     TE.chain(entryUseCase.createOneEntry2({
       entriesInvoker: entriesRepository.insertOne(await getClient()),
       tagsInvoker: tagsRepository.insertAll(await getClient()),
     })),
-//    TE.map(tap(console.log)),
     TE.map(result => res.json(result))
   )();
 };
