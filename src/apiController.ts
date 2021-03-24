@@ -30,7 +30,7 @@ export const readOneEntry: RequestHandler = async (req, res) => {
 
 export const createNewEntry: RequestHandler = async (req, res) => {
   pipe(
-    TE.right(req.body),
+    TE.right(req),
 //    TE.chain(apiRequest.validateToken2),
     TE.map(apiRequest.entitize),
     TE.chain(entryUseCase.createOneEntry2({
@@ -46,7 +46,7 @@ export const updateEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.updateOne(await getClient());
 
   await apiRequest.validateToken(req);
-  const entry = apiRequest.entitize(req.body);
+  const entry = apiRequest.entitize(req);
   const result = await dbInvoker(entry);
   res.json(result);
 };

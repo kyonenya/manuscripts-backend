@@ -6,12 +6,12 @@ import Boom from '@hapi/boom';
 import { Entry } from './entryEntity';
 import { authApp, uid } from './firebaseAdmin';
 
-export const entitize = (reqBody: Request['body']) =>
+export const entitize = (req: Request) =>
   new Entry({
-    text: reqBody.text,
-    tags: reqBody.tags,
-    uuid: reqBody.uuid,
-    starred: reqBody.starred,
+    text: req.body.text,
+    tags: req.body.tags,
+    uuid: req.body.uuid,
+    starred: req.body.starred,
   });
 
 export const validateToken = async (req: Request) => {
