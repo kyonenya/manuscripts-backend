@@ -32,7 +32,7 @@ export const createNewEntry = async (req: Request, res: Response) => {
     TE.right(req),
     TE.chain(apiRequest.validateToken2),
     TE.map(apiRequest.entitize),
-    TE.chain(entryUseCase.createOneEntry2(await getClient())),
+    TE.chain(entryUseCase.createOne(await getClient())),
     TE.map(result => res.json(result))
   );
 };
@@ -40,12 +40,12 @@ export const createNewEntry = async (req: Request, res: Response) => {
 export const updateEntry: RequestHandler = async (req, res) => {
   await apiRequest.validateToken(req);
   const entry = apiRequest.entitize(req);
-  const result = await entryUseCase.updateOneEntry(await getClient())(entry);
+  const result = await entryUseCase.updateOne(await getClient())(entry);
   res.json(result);
 };
 
 export const deleteEntry: RequestHandler = async (req, res) => {
   const uuid = apiRequest.uuidParams(req);
-  const result = await entryUseCase.deleteOneEntry(await getClient())(uuid);
+  const result = await entryUseCase.deleteOne(await getClient())(uuid);
   res.json(result);
 };

@@ -5,16 +5,7 @@ import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
-export const createOneEntry = ({ entry, entriesInvoker, tagsInvoker }: {
-  entry: Entry,
-  entriesInvoker: (entry: Entry) => Promise<void>,
-  tagsInvoker: (tags: string[]|null, uuid: string) => Promise<void>,
-}): Promise<Entry> => {
-  return Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)])
-    .then(_ => entry)
-};
-
-export const createOneEntry2 = (client: PoolClient) => (entry: Entry) : TE.TaskEither<any, any> => {
+export const createOne = (client: PoolClient) => (entry: Entry) : TE.TaskEither<any, any> => {
   const entriesInvoker = entriesRepository.insertOne(client);
   const tagsInvoker = tagsRepository.insertAll(client);
   return TE.tryCatch(
@@ -23,17 +14,16 @@ export const createOneEntry2 = (client: PoolClient) => (entry: Entry) : TE.TaskE
   )
 };
 
-export const updateOneEntry = (client: PoolClient) => (entry: Entry): Promise<Entry> => {
+export const updateOne = (client: PoolClient) => (entry: Entry): Promise<Entry> => {
   const entriesInvoker = entriesRepository.updateOne(client);
   const tagsInvoker = tagsRepository.updateAll(client);
   return Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)])
     .then(_ => entry)
 };
 
-export const deleteOneEntry = (client: PoolClient) => (uuid: string): Promise<string> => {
+export const deleteOne = (client: PoolClient) => (uuid: string): Promise<string> => {
   const entriesInvoker = entriesRepository.deleteOne(client);
   const tagsInvoker = tagsRepository.deleteAll(client);
-  return Promise
-    .all([entriesInvoker(uuid), tagsInvoker(uuid)])
+  return Promise.all([entriesInvoker(uuid), tagsInvoker(uuid)])
     .then(_ => uuid);
 };
