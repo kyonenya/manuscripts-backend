@@ -20,17 +20,16 @@ export const readAllEntries: RequestHandler = async (req, res) => {
 };
 
 export const readOneEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.selectOne(await getClient());
   await apiRequest.validateToken(req);
   const uuid = apiRequest.uuidParams(req);
-  const data = await dbInvoker(uuid);
+  const data = await entryUseCase.readOne(await getClient())(uuid);
   res.json(data);
 };
 
 export const createNewEntry = async (req: Request, res: Response) => {
   return pipe(
     TE.right(req),
-    TE.chain(apiRequest.validateToken2),
+    TE.map(tap(apiRequest.validateToken2)),
     TE.map(apiRequest.entitize),
     TE.chain(entryUseCase.createOne(await getClient())),
     TE.map(result => res.json(result))
