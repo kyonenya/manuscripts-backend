@@ -49,9 +49,7 @@ export const updateEntry: RequestHandler = async (req, res) => {
 };
 
 export const deleteEntry: RequestHandler = async (req, res) => {
-  const result = await entryUseCase.deleteOneEntry({
-    client: await getClient(),
-    uuid: apiRequest.uuidParams(req),
-  });
+  const uuid = apiRequest.uuidParams(req);
+  const result = await entryUseCase.deleteOneEntry(await getClient())(uuid);
   res.json(result);
 };

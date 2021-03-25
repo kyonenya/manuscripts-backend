@@ -31,10 +31,7 @@ export const updateOneEntry = (client: PoolClient) => (entry: Entry): Promise<En
     .then(_ => entry)
 };
 
-export const deleteOneEntry = ({ client, uuid }: {
-  client: PoolClient,
-  uuid: string,
-}): Promise<string> => {
+export const deleteOneEntry = (client: PoolClient) => (uuid: string): Promise<string> => {
   const entriesInvoker = entriesRepository.deleteOne(client);
   const tagsInvoker = tagsRepository.deleteAll(client);
   return Promise
