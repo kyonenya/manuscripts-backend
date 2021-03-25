@@ -31,6 +31,6 @@ export const deleteOneEntry = ({ client, uuid }: {
   const entriesInvoker = entriesRepository.deleteOne(client);
   const tagsInvoker = tagsRepository.deleteAll(client);
   return Promise
-    .all([entriesInvoker({ uuid }), tagsInvoker({ uuid })])
+    .all([entriesInvoker(uuid), tagsInvoker(uuid)])
     .then((results) => results[0]);
 };

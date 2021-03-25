@@ -45,7 +45,7 @@ export const selectAll = (client: PoolClient) => {
 };
 
 export const selectOne = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }): Promise<Entry | undefined> => {
+  return async (uuid: string): Promise<Entry | undefined> => {
     const sql = `
       SELECT
         entries.*
@@ -59,13 +59,8 @@ export const selectOne = (client: PoolClient) => {
         entries.uuid = $1
       ;`;
     const params = [uuid];
-
-    try {
-      const queryResult = await client.query(sql, params);
-      return entitize(queryResult.rows[0]);
-    } catch (err) {
-      console.error(err);
-    }
+    const queryResult = await client.query(sql, params);
+    return entitize(queryResult.rows[0]);
   };
 };
 
@@ -102,30 +97,22 @@ export const updateOne = (client: PoolClient) => {
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
 
-    try {
-      const queryResult = await client.query(sql, params);
-      if (!entry.tags) {
-        return queryResult.rowCount === 1 ? entry : undefined;
-      }
-      const tagsResult = await tagsRepository.updateAll(client)({
-        uuid: entry.uuid,
-        tags: entry.tags,
-      });
-      return queryResult.rowCount === 1 && tagsResult === true
-        ? entry
-        : undefined;
-    } catch (err) {
-      console.error(err);
+    const queryResult = await client.query(sql, params);
+    if (!entry.tags) {
+      return queryResult.rowCount === 1 ? entry : undefined;
     }
+    const tagsResult = await tagsRepository.updateAll(client)(
+      entry.tags, 
+      entry.uuid,
+    );
+    return queryResult.rowCount === 1 && tagsResult === true
+      ? entry
+      : undefined;
   };
 };
 
 export const deleteOne = (client: PoolClient) => {
-  return async ({
-    uuid,
-  }: {
-    uuid: string;
-  }): Promise<Entry['uuid'] | null> => {
+  return async (uuid: string): Promise<Entry['uuid'] | null> => {
     const sql = `
       DELETE
       FROM

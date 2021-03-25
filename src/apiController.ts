@@ -24,7 +24,7 @@ export const readOneEntry: RequestHandler = async (req, res) => {
 
   await apiRequest.validateToken(req);
   const uuid = apiRequest.uuidParams(req);
-  const data = await dbInvoker({ uuid });
+  const data = await dbInvoker(uuid);
   res.json(data);
 };
 

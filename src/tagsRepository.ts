@@ -1,7 +1,7 @@
 import { PoolClient } from 'pg';
 
 export const selectAll = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }) => {
+  return async (uuid: string) => {
     const sql = `
       SELECT *
       FROM
@@ -39,14 +39,8 @@ export const insertAll = (client: PoolClient) => {
 };
 
 export const updateAll = (client: PoolClient) => {
-  return async ({
-    uuid,
-    tags,
-  }: {
-    uuid: string;
-    tags: string[];
-  }): Promise<boolean | undefined> => {
-    const deleteResult = await deleteAll(client)({ uuid });
+  return async (tags: string[], uuid: string): Promise<boolean | undefined> => {
+    const deleteResult = await deleteAll(client)(uuid);
     const insertResult = await insertAll(client)(tags, uuid);
     // TODO: 削除する
     return true;
@@ -54,7 +48,7 @@ export const updateAll = (client: PoolClient) => {
 };
 
 export const deleteAll = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }): Promise<string | undefined> => {
+  return async (uuid: string): Promise<string | undefined> => {
     const sql = `
       DELETE
       FROM

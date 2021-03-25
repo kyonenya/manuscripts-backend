@@ -14,10 +14,10 @@ describe('tagsRepository', () => {
   });
   it('selectAll', async () => {
     const dbInvoker = tagsRepository.selectAll(await getClient());
-    await dbInvoker({ uuid });
+    await dbInvoker(uuid);
   });
   it('deleteAll', async () => {
     const dbInvoker = tagsRepository.deleteAll(await getClient());
-    await dbInvoker({ uuid });
+    await dbInvoker(uuid);
   });
 });
