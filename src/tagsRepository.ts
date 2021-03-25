@@ -39,11 +39,10 @@ export const insertAll = (client: PoolClient) => {
 };
 
 export const updateAll = (client: PoolClient) => {
-  return async (tags: string[], uuid: string): Promise<boolean | undefined> => {
+  return async (tags: string[] | null, uuid: string): Promise<void> => {
+    if (!tags) return;
     const deleteResult = await deleteAll(client)(uuid);
     const insertResult = await insertAll(client)(tags, uuid);
-    // TODO: 削除する
-    return true;
   };
 };
 

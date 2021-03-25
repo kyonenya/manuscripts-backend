@@ -42,11 +42,9 @@ export const createNewEntry = async (req: Request, res: Response) => {
 };
 
 export const updateEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.updateOne(await getClient());
-
   await apiRequest.validateToken(req);
   const entry = apiRequest.entitize(req);
-  const result = await dbInvoker(entry);
+  const result = await entryUseCase.updateOneEntry(await getClient())(entry);
   res.json(result);
 };
 

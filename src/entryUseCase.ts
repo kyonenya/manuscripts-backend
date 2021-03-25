@@ -24,6 +24,13 @@ export const createOneEntry2 = ({ entriesInvoker, tagsInvoker }: {
   )
 };
 
+export const updateOneEntry = (client: PoolClient) => (entry: Entry) => {
+  const entriesInvoker = entriesRepository.updateOne(client);
+  const tagsInvoker = tagsRepository.updateAll(client);
+  return Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)])
+    .then(_ => entry)
+};
+
 export const deleteOneEntry = ({ client, uuid }: {
   client: PoolClient,
   uuid: string,
@@ -34,3 +41,4 @@ export const deleteOneEntry = ({ client, uuid }: {
     .all([entriesInvoker(uuid), tagsInvoker(uuid)])
     .then((results) => results[0]);
 };
+

@@ -85,7 +85,7 @@ export const insertOne = (client: PoolClient) => {
 };
 
 export const updateOne = (client: PoolClient) => {
-  return async (entry: Entry): Promise<Entry | undefined> => {
+  return async (entry: Entry): Promise<void> => {
     const sql = `
       UPDATE
         entries
@@ -96,18 +96,8 @@ export const updateOne = (client: PoolClient) => {
         uuid = $3
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
-
     const queryResult = await client.query(sql, params);
-    if (!entry.tags) {
-      return queryResult.rowCount === 1 ? entry : undefined;
-    }
-    const tagsResult = await tagsRepository.updateAll(client)(
-      entry.tags, 
-      entry.uuid,
-    );
-    return queryResult.rowCount === 1 && tagsResult === true
-      ? entry
-      : undefined;
+    if (queryResult.rowCount !== 1) throw new Error('invalid rowCount');
   };
 };
 
