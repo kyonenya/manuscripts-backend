@@ -23,7 +23,7 @@ const entitize = (row: dbSchemable) => {
 };
 
 export const selectAll = (client: PoolClient) => {
-  return async (limit: number): Promise<Entry[] | undefined> => {
+  return async (limit: number): Promise<Entry[]> => {
     const sql = `
       SELECT
         entries.*
@@ -45,7 +45,7 @@ export const selectAll = (client: PoolClient) => {
 };
 
 export const selectOne = (client: PoolClient) => {
-  return async (uuid: string): Promise<Entry | undefined> => {
+  return async (uuid: string): Promise<Entry> => {
     const sql = `
       SELECT
         entries.*
@@ -102,7 +102,7 @@ export const updateOne = (client: PoolClient) => {
 };
 
 export const deleteOne = (client: PoolClient) => {
-  return async (uuid: string): Promise<Entry['uuid'] | null> => {
+  return async (uuid: string): Promise<void> => {
     const sql = `
       DELETE
       FROM
@@ -112,7 +112,6 @@ export const deleteOne = (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) return null;
-    return uuid;
+    if (queryResult.rowCount !== 1) throw new Error('not found');
   };
 };
