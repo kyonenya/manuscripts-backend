@@ -1,4 +1,5 @@
 import { PoolClient } from 'pg';
+import Boom from '@hapi/boom';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
@@ -60,6 +61,7 @@ export const selectOne = (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
+    if (queryResult.rowCount !== 1) throw Boom.notFound('指定された記事は存在しません');
     return entitize(queryResult.rows[0]);
   };
 };
@@ -80,7 +82,7 @@ export const insertOne = (client: PoolClient) => {
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw new Error('invalid rowCount');
+    if (queryResult.rowCount !== 1) throw Boom.badImplementation('invalid rowCount');
   };
 };
 
@@ -97,7 +99,7 @@ export const updateOne = (client: PoolClient) => {
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw new Error('invalid rowCount');
+    if (queryResult.rowCount !== 1) throw Boom.badImplementation('invalid rowCount');
   };
 };
 
@@ -112,6 +114,6 @@ export const deleteOne = (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw new Error('not found');
+    if (queryResult.rowCount !== 1) throw Boom.notFound('指定された記事は存在しません');
   };
 };
