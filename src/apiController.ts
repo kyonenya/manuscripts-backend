@@ -21,7 +21,6 @@ export const readAllEntries: RequestHandler = async (req, res) => {
 
 export const readOneEntry: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.selectOne(await getClient());
-
   await apiRequest.validateToken(req);
   const uuid = apiRequest.uuidParams(req);
   const data = await dbInvoker(uuid);
@@ -33,10 +32,7 @@ export const createNewEntry = async (req: Request, res: Response) => {
     TE.right(req),
     TE.chain(apiRequest.validateToken2),
     TE.map(apiRequest.entitize),
-    TE.chain(entryUseCase.createOneEntry2({
-      entriesInvoker: entriesRepository.insertOne(await getClient()),
-      tagsInvoker: tagsRepository.insertAll(await getClient()),
-    })),
+    TE.chain(entryUseCase.createOneEntry2(await getClient())),
     TE.map(result => res.json(result))
   );
 };

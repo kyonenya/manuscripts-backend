@@ -14,10 +14,9 @@ export const createOneEntry = ({ entry, entriesInvoker, tagsInvoker }: {
     .then(_ => entry)
 };
 
-export const createOneEntry2 = ({ entriesInvoker, tagsInvoker }: {
-  entriesInvoker: (entry: Entry) => Promise<void>,
-  tagsInvoker: (tags: string[]|null, uuid: string) => Promise<void>,
-}) => (entry: Entry) : TE.TaskEither<any, any> => {
+export const createOneEntry2 = (client: PoolClient) => (entry: Entry) : TE.TaskEither<any, any> => {
+  const entriesInvoker = entriesRepository.insertOne(client);
+  const tagsInvoker = tagsRepository.insertAll(client);
   return TE.tryCatch(
     () => Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)]).then(_ => entry),
     identity
