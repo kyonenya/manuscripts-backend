@@ -14,8 +14,8 @@ export const readAllEntries: RequestHandler = async (req, res) => {
   const dbInvoker = entriesRepository.selectAll(await getClient());
 
   await apiRequest.validateToken(req);
-  const params = apiRequest.limitQuery(req);
-  const data = await dbInvoker(params);
+  const limitNum = apiRequest.limitQuery(req);
+  const data = await dbInvoker(limitNum);
   res.json(data);
 };
 

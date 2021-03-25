@@ -23,7 +23,7 @@ const entitize = (row: dbSchemable) => {
 };
 
 export const selectAll = (client: PoolClient) => {
-  return async ({ limit }: { limit: number }): Promise<Entry[] | undefined> => {
+  return async (limit: number): Promise<Entry[] | undefined> => {
     const sql = `
       SELECT
         entries.*
@@ -39,13 +39,8 @@ export const selectAll = (client: PoolClient) => {
         $1
       ;`;
     const params = [limit];
-
-    try {
-      const queryResult = await client.query(sql, params);
-      return queryResult.rows.map((row) => entitize(row));
-    } catch (err) {
-      console.error(err);
-    }
+    const queryResult = await client.query(sql, params);
+    return queryResult.rows.map((row) => entitize(row));
   };
 };
 

@@ -38,9 +38,9 @@ export const validateToken2 = (req: Request): TE.TaskEither<any, any> => async (
   return E.right(req);
 };
 
-export const limitQuery = (req: Request) => {
+export const limitQuery = (req: Request): number => {
   if (!req.query.limit) throw new Error('件数が指定されていません');
-  return { limit: parseInt(req.query.limit.toString()) };
+  return parseInt(req.query.limit.toString());
 };
 
 export const uuidParams = (req: Request): string => {
