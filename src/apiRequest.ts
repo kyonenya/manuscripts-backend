@@ -28,22 +28,22 @@ export const validateToken = async (req: Request) => {
 
 export const validateToken2 = (req: Request): TE.TaskEither<any, any> => async () => {
   if (!req.headers['authorization']) {
-    return E.left(Boom.unauthorized('idトークンが空です'));
+    return E.left(Boom.unauthorized('IDトークンを送信してください'));
   }
   const idToken = req.headers['authorization'].split(' ')[1];
   const decoded = await authApp.verifyIdToken(idToken);
   if (decoded.uid !== uid) {
-    E.left(Boom.unauthorized('異なるuidです'));
+    E.left(Boom.unauthorized('正しいユーザーのIDトークンを送信してください'));
   }
   return E.right(req);
 };
 
 export const limitQuery = (req: Request): number => {
-  if (!req.query.limit) throw Boom.badRequest('件数が指定されていません');
+  if (!req.query.limit) throw Boom.badRequest('取得したい記事の件数を指定してください');
   return parseInt(req.query.limit.toString());
 };
 
 export const uuidParams = (req: Request): string => {
-  if (!req.params.uuid) throw Boom.badRequest('uuidが指定されていません');
+  if (!req.params.uuid) throw Boom.badRequest('記事のuuidを指定してください');
   return req.params.uuid.toString();
 };
