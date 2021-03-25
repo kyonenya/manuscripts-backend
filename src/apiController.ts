@@ -2,20 +2,15 @@ import { RequestHandler, Request, Response } from 'express';
 import * as TE from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function';
 import { tap } from './functions';
-import createError from 'http-errors';
 import { getClient } from './postgres';
 import * as entryUseCase from './entryUseCase';
 import * as apiRequest from './apiRequest';
-import * as entriesRepository from './entriesRepository';
-import * as tagsRepository from './tagsRepository';
 import { Either } from './Either';
 
 export const readAllEntries: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.selectAll(await getClient());
-
   await apiRequest.validateToken(req);
-  const limitNum = apiRequest.limitQuery(req);
-  const data = await dbInvoker(limitNum);
+  const limit = apiRequest.limitQuery(req);
+  const data = await entryUseCase.readAll(await getClient())(limit);
   res.json(data);
 };
 

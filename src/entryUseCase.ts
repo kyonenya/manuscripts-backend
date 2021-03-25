@@ -14,6 +14,11 @@ export const createOne = (client: PoolClient) => (entry: Entry) : TE.TaskEither<
   )
 };
 
+export const readAll = (client: PoolClient) => (limit: number): Promise<Entry[]> => {
+  const dbInvoker = entriesRepository.selectAll(client);
+  return dbInvoker(limit);
+};
+
 export const readOne = (client: PoolClient) => (uuid: string): Promise<Entry> => {
   const dbInvoker = entriesRepository.selectOne(client);
   return dbInvoker(uuid);
