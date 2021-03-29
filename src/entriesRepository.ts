@@ -82,7 +82,7 @@ export const insertOne = (client: PoolClient) => {
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw Boom.badImplementation('invalid rowCount');
+    if (queryResult.rowCount !== 1) throw Boom.badImplementation('unexpected rowCount');
   };
 };
 
@@ -99,7 +99,7 @@ export const updateOne = (client: PoolClient) => {
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw Boom.badImplementation('invalid rowCount');
+    if (queryResult.rowCount !== 1) throw Boom.badImplementation('unexpected rowCount');
   };
 };
 
