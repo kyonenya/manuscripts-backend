@@ -1,5 +1,6 @@
-import * as TE from 'fp-ts/lib/TaskEither'
 import * as A from 'fp-ts/lib/Array'
+import * as E from 'fp-ts/lib/Either'
+import * as TE from 'fp-ts/lib/TaskEither'
 import { sequenceT } from 'fp-ts/lib/Apply';
 import { identity } from 'fp-ts/lib/function';
 import Boom from '@hapi/boom';
@@ -8,13 +9,12 @@ import * as entriesRepository from './entriesRepository';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
-export const createOne = (client: PoolClient) => (entry: Entry) : TE.TaskEither<unknown, Entry> => {
+export const createOne = (client: PoolClient) => (entry: Entry): TE.TaskEither<Boom.Boom, Entry> => () => {
   const entriesInvoker = entriesRepository.insertOne(client);
   const tagsInvoker = tagsRepository.insertAll(client);
-  return TE.tryCatch(
-    () => Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)]).then(_ => entry),
-    identity
-  )
+  return Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)])
+    .then(_ => E.right(entry))
+    .catch((err: Error) => E.left(Boom.internal(err.message)));
 };
 
 export const createAll = (client: PoolClient) => (entries: Entry[]) => {
