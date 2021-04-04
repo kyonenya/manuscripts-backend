@@ -3,6 +3,7 @@ import * as TE from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/function';
 import { tap } from './functions';
 import { getClient } from './postgres';
+import Boom from '@hapi/boom';
 import * as entryUseCase from './entryUseCase';
 import * as apiRequest from './apiRequest';
 import { Either } from './Either';
@@ -21,7 +22,7 @@ export const readOneEntry = async (req: Request, res: Response) => {
   res.json(data);
 };
 
-export const createNewEntry = (req: Request, res: Response) => {
+export const createNewEntry = (req: Request, res: Response): TE.TaskEither<Boom.Boom, Response> => {
   return pipe(
     TE.right(req),
     TE.map(tap(apiRequest.validateToken2)),
