@@ -5,7 +5,7 @@ import * as errorController from './errorController';
 
 export const router = Router()
   .get('/api/entries', (req, res) => apiController.readAllEntries(req, res)())
-  .get('/api/entries/:uuid', apiController.readOneEntry)
+  .get('/api/entries/:uuid', (req, res) => apiController.readOneEntry(req, res)())
   .post('/api/entries/:uuid', (req, res) => apiController.createNewEntry(req, res)())
   .put('/api/entries/:uuid', apiController.updateEntry)
   .delete('/api/entries/:uuid', apiController.deleteEntry)

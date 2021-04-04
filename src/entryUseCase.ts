@@ -23,15 +23,15 @@ export const createAll = (getClient: () => Promise<PoolClient>) => (entries: Ent
 };
 
 export const readAll = (getClient: () => Promise<PoolClient>) => (limit: number): TE.TaskEither<any, Entry[]> => async () => {
-  const client = await getClient();
-  const dbInvoker = entriesRepository.selectAll(client);
+  const dbInvoker = entriesRepository.selectAll(await getClient());
   const result = await dbInvoker(limit);
   return E.right(result);
 };
 
-export const readOne = (client: PoolClient) => (uuid: string): Promise<Entry> => {
-  const dbInvoker = entriesRepository.selectOne(client);
-  return dbInvoker(uuid);
+export const readOne = (getClient: () => Promise<PoolClient>) => (uuid: string): TE.TaskEither<any, Entry> => async () => {
+  const dbInvoker = entriesRepository.selectOne(await getClient());
+  const result = await dbInvoker(uuid);
+  return E.right(result);
 };
 
 export const updateOne = (client: PoolClient) => (entry: Entry): Promise<Entry> => {

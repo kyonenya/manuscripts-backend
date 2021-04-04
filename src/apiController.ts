@@ -18,11 +18,14 @@ export const readAllEntries = (req: Request, res: Response) => {
   );
 };
 
-export const readOneEntry = async (req: Request, res: Response) => {
-  await apiRequest.validateToken(req);
-  const uuid = apiRequest.uuidParams(req);
-  const data = await entryUseCase.readOne(await getClient())(uuid);
-  res.json(data);
+export const readOneEntry = (req: Request, res: Response) => {
+  return pipe(
+    TE.right(req),
+    TE.map(tap(apiRequest.validateToken2)),
+    TE.map(apiRequest.uuidParams),
+    TE.chain(entryUseCase.readOne(getClient)),
+    TE.map(result => res.json(result)),
+  );
 };
 
 export const createNewEntry = (req: Request, res: Response): TE.TaskEither<Boom.Boom, Response> => {
