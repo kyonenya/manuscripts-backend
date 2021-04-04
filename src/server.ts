@@ -6,7 +6,7 @@ import { router } from './router';
 dotenv.config();
 const port = process.env.PORT || 3000;
 
-const app = express()
+express()
   .use(cors())
   .options('*', (req, res) => res.sendStatus(200)) // preflight
   .use(express.urlencoded({ extended: false })) // analyze request body
