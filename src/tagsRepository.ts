@@ -1,7 +1,8 @@
 import { PoolClient } from 'pg';
+import Boom from '@hapi/boom';
 
 export const selectAll = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }) => {
+  return async (uuid: string) => {
     const sql = `
       SELECT *
       FROM
@@ -16,13 +17,8 @@ export const selectAll = (client: PoolClient) => {
 };
 
 export const insertAll = (client: PoolClient) => {
-  return async ({
-    uuid,
-    tags,
-  }: {
-    uuid: string;
-    tags: string[];
-  }): Promise<number | undefined> => {
+  return async (tags: string[] | null, uuid: string): Promise<void> => {
+    if (!tags) return;
     const sql = `
       INSERT INTO tags (
         uuid
@@ -39,27 +35,20 @@ export const insertAll = (client: PoolClient) => {
       ;`;
     const params = [uuid, ...tags];
     const queryResult = await client.query(sql, params);
-    return queryResult.rowCount;
+    if (queryResult.rowCount !== tags.length) throw Boom.badImplementation('unexpected rowCount');
   };
 };
 
 export const updateAll = (client: PoolClient) => {
-  return async ({
-    uuid,
-    tags,
-  }: {
-    uuid: string;
-    tags: string[];
-  }): Promise<boolean | undefined> => {
-    const deleteResult = await deleteAll(client)({ uuid });
-    const insertResult = await insertAll(client)({ uuid, tags });
-    // TODO: 削除する
-    return true;
+  return async (tags: string[] | null, uuid: string): Promise<void> => {
+    if (!tags) return;
+    const deleteResult = await deleteAll(client)(uuid);
+    const insertResult = await insertAll(client)(tags, uuid);
   };
 };
 
 export const deleteAll = (client: PoolClient) => {
-  return async ({ uuid }: { uuid: string }): Promise<string | undefined> => {
+  return async (uuid: string): Promise<void> => {
     const sql = `
       DELETE
       FROM
@@ -69,8 +58,6 @@ export const deleteAll = (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount === 0) return undefined;
-    return uuid;
   };
 };
 

@@ -1,56 +1,58 @@
-import { RequestHandler } from 'express';
-import createError from 'http-errors';
+import { Request, Response } from 'express';
+import * as TE from 'fp-ts/lib/TaskEither'
+import { pipe } from 'fp-ts/lib/function';
 import { getClient } from './postgres';
+import * as Boom from '@hapi/boom';
+import * as entryUseCase from './entryUseCase';
 import * as apiRequest from './apiRequest';
-import * as entriesRepository from './entriesRepository';
-import * as tagsRepository from './tagsRepository';
 import { Either } from './Either';
 
-export const readAllEntries: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.selectAll(await getClient());
-
-  await apiRequest.validateToken(req);
-  const params = apiRequest.limitQuery(req);
-  const data = await dbInvoker(params);
-  res.json(data);
+export const readAllEntries = (req: Request, res: Response) => {
+  return pipe(
+    TE.right(req),
+    TE.chain(apiRequest.validateToken),
+    TE.map(apiRequest.limitQuery),
+    TE.chain(entryUseCase.readAll(getClient)),
+    TE.map(result => res.json(result)),
+  );
 };
 
-export const readOneEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.selectOne(await getClient());
-
-  await apiRequest.validateToken(req);
-  const uuid = apiRequest.uuidParams(req);
-  const data = await dbInvoker({ uuid });
-  res.json(data);
+export const readOneEntry = (req: Request, res: Response) => {
+  return pipe(
+    TE.right(req),
+    TE.chain(apiRequest.validateToken),
+    TE.map(apiRequest.uuidParams),
+    TE.chain(entryUseCase.readOne(getClient)),
+    TE.map(result => res.json(result)),
+  );
 };
 
-export const createNewEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.insertOne(await getClient());
-
-  await apiRequest.validateToken(req);
-  const entry = apiRequest.entitize(req.body);
-  const result = await dbInvoker(entry);
-  res.json(result);
+export const createNewEntry = (req: Request, res: Response): TE.TaskEither<Boom.Boom, Response> => {
+  return pipe(
+    TE.right(req),
+    TE.chain(apiRequest.validateToken),
+    TE.map(apiRequest.entitize),
+    TE.chain(entryUseCase.createOne(getClient)),
+    TE.map(result => res.json(result))
+  );
 };
 
-export const updateEntry: RequestHandler = async (req, res) => {
-  const dbInvoker = entriesRepository.updateOne(await getClient());
-
-  await apiRequest.validateToken(req);
-  const entry = apiRequest.entitize(req.body);
-  const result = await dbInvoker(entry);
-  res.json(result);
+export const updateEntry = (req: Request, res: Response) => {
+  return pipe(
+    TE.right(req),
+    TE.chain(apiRequest.validateToken),
+    TE.map(apiRequest.entitize),
+    TE.chain(entryUseCase.updateOne(getClient)),
+    TE.map(result => res.json(result)),
+  );
 };
 
-export const deleteEntry: RequestHandler = async (req, res) => {
-  const entriesInvoker = entriesRepository.deleteOne(await getClient());
-  const tagsInvoker = tagsRepository.deleteAll(await getClient());
-
-  await apiRequest.validateToken(req);
-  const uuid = apiRequest.uuidParams(req);
-  Promise.all([entriesInvoker({ uuid }), tagsInvoker({ uuid })]).then(
-    (results) => {
-      res.json(results[0]);
-    }
+export const deleteEntry = (req: Request, res: Response) => {
+  return pipe(
+    TE.right(req),
+    TE.chain(apiRequest.validateToken),
+    TE.map(apiRequest.uuidParams),
+    TE.chain(entryUseCase.deleteOne(getClient)),
+    TE.map(result => res.json(result)),
   );
 };
