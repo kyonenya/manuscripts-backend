@@ -4,7 +4,7 @@ import * as apiController from './apiController';
 import * as errorController from './errorController';
 
 export const router = Router()
-  .get('/api/entries', apiController.readAllEntries)
+  .get('/api/entries', (req, res) => apiController.readAllEntries(req, res)())
   .get('/api/entries/:uuid', apiController.readOneEntry)
   .post('/api/entries/:uuid', (req, res) => apiController.createNewEntry(req, res)())
   .put('/api/entries/:uuid', apiController.updateEntry)

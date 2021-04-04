@@ -8,11 +8,14 @@ import * as entryUseCase from './entryUseCase';
 import * as apiRequest from './apiRequest';
 import { Either } from './Either';
 
-export const readAllEntries = async (req: Request, res: Response) => {
-  await apiRequest.validateToken(req);
-  const limit = apiRequest.limitQuery(req);
-  const data = await entryUseCase.readAll(await getClient())(limit);
-  res.json(data);
+export const readAllEntries = (req: Request, res: Response) => {
+  return pipe(
+    TE.right(req),
+    TE.map(tap(apiRequest.validateToken2(req))),
+    TE.map(apiRequest.limitQuery),
+    TE.chain(entryUseCase.readAll(getClient)),
+    TE.map(result => res.json(result)),
+  );
 };
 
 export const readOneEntry = async (req: Request, res: Response) => {

@@ -22,9 +22,11 @@ export const createAll = (getClient: () => Promise<PoolClient>) => (entries: Ent
   return A.array.sequence(TE.taskEitherSeq)(entries.map(entry => createOne(getClient)(entry)));
 };
 
-export const readAll = (client: PoolClient) => (limit: number): Promise<Entry[]> => {
+export const readAll = (getClient: () => Promise<PoolClient>) => (limit: number): TE.TaskEither<any, Entry[]> => async () => {
+  const client = await getClient();
   const dbInvoker = entriesRepository.selectAll(client);
-  return dbInvoker(limit);
+  const result = await dbInvoker(limit);
+  return E.right(result);
 };
 
 export const readOne = (client: PoolClient) => (uuid: string): Promise<Entry> => {
