@@ -34,7 +34,7 @@ export const readOne = (getClient: () => Promise<PoolClient>) => (uuid: string):
   return E.right(result);
 };
 
-export const updateOne = (getClient: () => Promise<PoolClient>) => (entry: Entry): TE.TaskEither<any, Entry> => async () => {
+export const updateOne = (getClient: () => Promise<PoolClient>) => (entry: Entry): TE.TaskEither<Boom.Boom, Entry> => async () => {
   const client = await getClient();
   const entriesInvoker = entriesRepository.updateOne(client);
   const tagsInvoker = tagsRepository.updateAll(client);
@@ -43,9 +43,11 @@ export const updateOne = (getClient: () => Promise<PoolClient>) => (entry: Entry
     .catch((err: Error) => E.left(Boom.boomify(err)));
 };
 
-export const deleteOne = (client: PoolClient) => (uuid: string): Promise<string> => {
+export const deleteOne = (getClient: () => Promise<PoolClient>) => (uuid: string): TE.TaskEither<Boom.Boom, string> => async () => {
+  const client = await getClient();
   const entriesInvoker = entriesRepository.deleteOne(client);
   const tagsInvoker = tagsRepository.deleteAll(client);
   return Promise.all([entriesInvoker(uuid), tagsInvoker(uuid)])
-    .then(_ => uuid);
+    .then(_ => E.right(uuid))
+    .catch((err: Error) => E.left(Boom.boomify(err)));
 };

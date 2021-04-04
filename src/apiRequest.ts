@@ -14,19 +14,7 @@ export const entitize = (req: Request) =>
     starred: req.body.starred,
   });
 
-export const validateToken = async (req: Request) => {
-  if (!req.headers['authorization']) {
-    throw Boom.unauthorized('idトークンが空です');
-  }
-  const idToken = req.headers['authorization'].split(' ')[1];
-  const decoded = await authApp.verifyIdToken(idToken);
-  if (decoded.uid !== uid) {
-    throw Boom.unauthorized('異なるuidです');
-  }
-  return req;
-};
-
-export const validateToken2 = (req: Request): TE.TaskEither<any, any> => async () => {
+export const validateToken = (req: Request): TE.TaskEither<any, any> => async () => {
   if (!req.headers['authorization']) {
     return E.left(Boom.unauthorized('IDトークンを送信してください'));
   }
