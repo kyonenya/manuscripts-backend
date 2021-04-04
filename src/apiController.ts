@@ -26,7 +26,7 @@ export const createNewEntry = async (req: Request, res: Response) => {
     TE.right(req),
     TE.map(tap(apiRequest.validateToken2)),
     TE.map(apiRequest.entitize),
-    TE.chain(entryUseCase.createOne(await getClient())),
+    TE.chain(entryUseCase.createOne(getClient)),
     TE.map(result => res.json(result))
   );
 };

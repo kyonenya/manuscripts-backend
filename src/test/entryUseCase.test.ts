@@ -18,6 +18,6 @@ describe('entryUseCase', () => {
         uuid: '6314797035ba0c947165469d44e66bcf',
       }),
     ];
-    const result = await entryUseCase.createAll(await getClient())(entries)();
+    const result = await entryUseCase.createAll(getClient)(entries)();
   });
 });
