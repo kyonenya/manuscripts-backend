@@ -21,7 +21,7 @@ export const readOneEntry = async (req: Request, res: Response) => {
   res.json(data);
 };
 
-export const createNewEntry = async (req: Request, res: Response) => {
+export const createNewEntry = (req: Request, res: Response) => {
   return pipe(
     TE.right(req),
     TE.map(tap(apiRequest.validateToken2)),
