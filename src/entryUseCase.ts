@@ -15,7 +15,7 @@ export const createOne = (getClient: () => Promise<PoolClient>) => (entry: Entry
   const tagsInvoker = tagsRepository.insertAll(client);
   return Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)])
     .then(_ => E.right(entry))
-    .catch((err: Error) => E.left(Boom.internal(err.message)));
+    .catch((err: Error) => E.left(Boom.boomify(err)));
 };
 
 export const createAll = (getClient: () => Promise<PoolClient>) => (entries: Entry[]) => {
@@ -34,11 +34,13 @@ export const readOne = (getClient: () => Promise<PoolClient>) => (uuid: string):
   return E.right(result);
 };
 
-export const updateOne = (client: PoolClient) => (entry: Entry): Promise<Entry> => {
+export const updateOne = (getClient: () => Promise<PoolClient>) => (entry: Entry): TE.TaskEither<any, Entry> => async () => {
+  const client = await getClient();
   const entriesInvoker = entriesRepository.updateOne(client);
   const tagsInvoker = tagsRepository.updateAll(client);
   return Promise.all([entriesInvoker(entry), tagsInvoker(entry.tags, entry.uuid)])
-    .then(_ => entry)
+    .then(_ => E.right(entry))
+    .catch((err: Error) => E.left(Boom.boomify(err)));
 };
 
 export const deleteOne = (client: PoolClient) => (uuid: string): Promise<string> => {

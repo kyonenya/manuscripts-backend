@@ -38,11 +38,14 @@ export const createNewEntry = (req: Request, res: Response): TE.TaskEither<Boom.
   );
 };
 
-export const updateEntry = async (req: Request, res: Response) => {
-  await apiRequest.validateToken(req);
-  const entry = apiRequest.entitize(req);
-  const result = await entryUseCase.updateOne(await getClient())(entry);
-  res.json(result);
+export const updateEntry = (req: Request, res: Response) => {
+  return pipe(
+    TE.right(req),
+    TE.map(tap(apiRequest.validateToken)),
+    TE.map(apiRequest.entitize),
+    TE.chain(entryUseCase.updateOne(getClient)),
+    TE.map(result => res.json(result)),
+  );
 };
 
 export const deleteEntry = async (req: Request, res: Response) => {
