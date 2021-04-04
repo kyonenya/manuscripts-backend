@@ -13,7 +13,6 @@ export const readAllEntries = (req: Request, res: Response) => {
     TE.chain(apiRequest.validateToken),
     TE.map(apiRequest.limitQuery),
     TE.chain(entryUseCase.readAll(getClient)),
-    TE.map(result => res.json(result)),
   );
 };
 
