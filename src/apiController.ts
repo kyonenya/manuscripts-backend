@@ -5,9 +5,9 @@ import { getClient } from './postgres';
 import * as Boom from '@hapi/boom';
 import * as entryUseCase from './entryUseCase';
 import * as apiRequest from './apiRequest';
-import { Either } from './Either';
+import { Entry } from './entryEntity';
 
-export const readAllEntries = (req: Request, res: Response) => {
+export const readAllEntries = (req: Request): TE.TaskEither<Boom.Boom<500>, Entry[]> => {
   return pipe(
     TE.right(req),
     TE.chain(apiRequest.validateToken),

@@ -3,13 +3,16 @@ import { Request, Response } from 'express';
 import path from 'path';
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither'
+import { Boom } from '@hapi/boom';
+import * as apiResponse from './apiResponse';
 import * as apiController from './apiController';
 import * as errorController from './errorController';
 
-const wrapper = (controller: (req: Request, res: Response) => TE.TaskEither<unknown, unknown>) => (req: Request, res: Response) => {
+const wrapper = (controller: (req: Request) => TE.TaskEither<Boom | Error, unknown>) => (req: Request, res: Response) => {
   pipe(
-    controller(req, res),
-    TE.map(result => res.json(result)),
+    controller(req),
+    TE.map(apiResponse.json(res)),
+    TE.mapLeft(apiResponse.error(res)),
   )();
 };
 
@@ -21,5 +24,5 @@ export const router = Router()
   .delete('/api/entries/:uuid', (req, res) => apiController.deleteEntry(req, res)())
   .get('/', (req, res) => res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html')))
   .use(errorController.notFound)
-  .use(errorController.internalError)
+//  .use(errorController.internalError)
   ;
