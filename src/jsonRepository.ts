@@ -13,7 +13,7 @@ type jsonEntry = {
 
 const entitize = (row: jsonEntry) => {
   return new Entry({
-    text: row.text,
+    text: unescape(row.text),
     starred: row.starred,
     uuid: row.uuid,
     tags: row.tags,
@@ -22,9 +22,7 @@ const entitize = (row: jsonEntry) => {
   });
 };
 
-export const readAll = async ({ filePath }: {
-  filePath: string,
-}): Promise<Entry[]> => {
+export const readAll = async (filePath: string): Promise<Entry[]> => {
   const json = await fs.promises.readFile(filePath, 'utf-8');
   const jsonEntries: jsonEntry[] = JSON.parse(json).entries;
   return jsonEntries.map(entry => entitize(entry));
