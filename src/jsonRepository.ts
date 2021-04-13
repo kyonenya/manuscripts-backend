@@ -13,7 +13,7 @@ type jsonEntry = {
 
 const entitize = (row: jsonEntry) => {
   return new Entry({
-    text: unescape(row.text),
+    text: unescape(row.text.replace(/\\\./g, '.')),
     starred: row.starred,
     uuid: row.uuid,
     tags: row.tags,
