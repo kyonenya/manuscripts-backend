@@ -51,3 +51,7 @@ export const deleteOne = (getClient: () => Promise<PoolClient>) => (uuid: string
     .then(_ => E.right(uuid))
     .catch((err: Error) => E.left(Boom.boomify(err)));
 };
+
+export const deleteAll = (getClient: () => Promise<PoolClient>) => (uuids: string[]) => {
+  return A.array.sequence(TE.taskEitherSeq)(uuids.map(entry => deleteOne(getClient)(entry)));
+};
