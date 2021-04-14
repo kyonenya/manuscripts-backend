@@ -1,5 +1,6 @@
 import { PoolClient } from 'pg';
 import Boom from '@hapi/boom';
+import dayjs from 'dayjs';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
@@ -73,14 +74,24 @@ export const insertOne = (client: PoolClient) => {
         text
         ,starred
         ,uuid
+        ,created_at
+        ,modified_at
       )
       VALUES (
         $1
         ,$2
         ,$3
+        ,$4
+        ,$5
       )
       ;`;
-    const params = [entry.text, entry.starred, entry.uuid];
+    const params = [
+      entry.text,
+      entry.starred,
+      entry.uuid,
+      entry.created_at ?? dayjs().toDate(),
+      entry.modified_at ?? dayjs().toDate(),
+    ];
     const queryResult = await client.query(sql, params);
     if (queryResult.rowCount !== 1) throw Boom.badImplementation('unexpected rowCount');
   };
