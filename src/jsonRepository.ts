@@ -5,7 +5,7 @@ import { Entry } from './entryEntity';
 type jsonEntry = {
   modifiedDate: string,
   creationDate: string,
-  text: string,
+  text: string | null,
   tags: string[],
   uuid: string,
   starred: boolean,
@@ -13,7 +13,7 @@ type jsonEntry = {
 
 const entitize = (row: jsonEntry) => {
   return new Entry({
-    text: unescape(row.text.replace(/\\\./g, '.')),
+    text: row.text ? unescape(row.text.replace(/\\\./g, '.')) : '',
     starred: row.starred,
     uuid: row.uuid,
     tags: row.tags,
