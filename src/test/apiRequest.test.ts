@@ -13,7 +13,6 @@ describe('apiRequest', () => {
     };
     // @ts-ignore
     const result = await apiRequest.validateToken(req);
-    console.log(result);
   });
   it('starred', () => {
     assert.deepStrictEqual(

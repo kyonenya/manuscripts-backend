@@ -6,6 +6,5 @@ describe('jsonRepository', () => {
   it('readAll', async () => {
     const filePath = path.resolve(__dirname, '..', '..', 'assets', 'dayone-210320.json');
     const entries = await jsonRepository.readAll(filePath);
-    console.log(entries);
   });
 });
