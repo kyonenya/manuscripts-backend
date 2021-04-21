@@ -11,10 +11,6 @@ describe('tagsRepository', () => {
     const dbInvoker = tagsRepository.insertAll(await getClient());
     await dbInvoker(tags, uuid);
   });
-  it('selectAll', async () => {
-    const dbInvoker = tagsRepository.selectAll(await getClient());
-    await dbInvoker(uuid);
-  });
   it('deleteAll', async () => {
     const dbInvoker = tagsRepository.deleteAll(await getClient());
     await dbInvoker(uuid);

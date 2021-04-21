@@ -1,21 +1,6 @@
 import { PoolClient } from 'pg';
 import Boom from '@hapi/boom';
 
-export const selectAll = (client: PoolClient) => {
-  return async (uuid: string) => {
-    const sql = `
-      SELECT *
-      FROM
-        tags
-      WHERE
-        uuid = $1
-      ;`;
-    const params = [uuid];
-    const queryResult = await client.query(sql, params);
-    return queryResult.rows;
-  };
-};
-
 export const insertAll = (client: PoolClient) => {
   return async (tags: string[] | null, uuid: string): Promise<void> => {
     if (!tags) return;
@@ -60,18 +45,3 @@ export const deleteAll = (client: PoolClient) => {
     const queryResult = await client.query(sql, params);
   };
 };
-
-/**
-  INSERT INTO tags (
-    uuid
-    ,tag
-  )
-  VALUES (
-    $1
-    ,$2
-  ), (
-    $1
-    ,$3
-  )
-  ;
-*/
