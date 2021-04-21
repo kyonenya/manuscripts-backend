@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 describe('tagsRepository', () => {
   const uuid = uuidv4().replace(/-/g, '');
   const tags = ['タグA', 'タグB'];
-  console.log(`testing... uuid:${uuid}`);
 
   it('insertAll', async () => {
     const dbInvoker = tagsRepository.insertAll(await getClient());
