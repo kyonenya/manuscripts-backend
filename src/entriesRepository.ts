@@ -46,6 +46,29 @@ export const selectAll = (client: PoolClient) => {
   };
 };
 
+export const selectAllByKeyword = (client: PoolClient) => {
+  return async (keyword: string, limit: number): Promise<Entry[]> => {
+    const sql = `
+      SELECT
+        entries.*
+        ,STRING_AGG(tags.tag, ',') AS taglist
+      FROM
+        entries
+        LEFT JOIN
+          tags
+        ON entries.uuid = tags.uuid
+      GROUP BY
+        entries.uuid
+      HAVING entries.text LIKE $1
+      ORDER BY
+        entries.created_at DESC
+      LIMIT $2;`;
+    const params = [keyword, limit];
+    const queryResult = await client.query(sql, params);
+    return queryResult.rows.map((row) => entitize(row));
+  };
+};
+
 export const selectOne = (client: PoolClient) => {
   return async (uuid: string): Promise<Entry> => {
     const sql = `
