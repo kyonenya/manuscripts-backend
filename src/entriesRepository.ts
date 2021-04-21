@@ -59,7 +59,7 @@ export const selectAllByKeyword = (client: PoolClient) => {
         ON entries.uuid = tags.uuid
       GROUP BY
         entries.uuid
-      HAVING entries.text LIKE '%$1%'
+      HAVING entries.text LIKE '%' || $1 || '%'
       ORDER BY
         entries.created_at DESC
       LIMIT $2;`;
