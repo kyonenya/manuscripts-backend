@@ -93,7 +93,7 @@ export const insertOne = (client: PoolClient) => {
       entry.modified_at ?? dayjs().toDate(),
     ];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw Boom.badImplementation('unexpected rowCount');
+    if (queryResult.rowCount !== 1) throw Boom.internal('unexpected rowCount');
   };
 };
 
@@ -110,7 +110,7 @@ export const updateOne = (client: PoolClient) => {
       ;`;
     const params = [entry.text, entry.starred, entry.uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw Boom.badImplementation('unexpected rowCount');
+    if (queryResult.rowCount !== 1) throw Boom.internal('unexpected rowCount');
   };
 };
 

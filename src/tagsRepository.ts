@@ -35,7 +35,7 @@ export const insertAll = (client: PoolClient) => {
       ;`;
     const params = [uuid, ...tags];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== tags.length) throw Boom.badImplementation('unexpected rowCount');
+    if (queryResult.rowCount !== tags.length) throw Boom.internal('unexpected rowCount');
   };
 };
 
