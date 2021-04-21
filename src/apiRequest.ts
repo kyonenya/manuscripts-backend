@@ -1,6 +1,6 @@
-import * as TE from 'fp-ts/lib/TaskEither'
-import * as E from 'fp-ts/lib/Either'
-import * as T from 'fp-ts/lib/Task';  
+import * as TE from 'fp-ts/lib/TaskEither';
+import * as E from 'fp-ts/lib/Either';
+import * as T from 'fp-ts/lib/Task';
 import { Request } from 'express';
 import Boom from '@hapi/boom';
 import { Entry } from './entryEntity';
@@ -14,7 +14,9 @@ export const entitize = (req: Request) =>
     starred: req.body.starred,
   });
 
-export const validateToken = (req: Request): TE.TaskEither<any, any> => async () => {
+export const validateToken = (
+  req: Request
+): TE.TaskEither<any, any> => async () => {
   if (!req.headers['authorization']) {
     return E.left(Boom.unauthorized('IDトークンを送信してください'));
   }
@@ -27,7 +29,8 @@ export const validateToken = (req: Request): TE.TaskEither<any, any> => async ()
 };
 
 export const limitQuery = (req: Request): number => {
-  if (!req.query.limit) throw Boom.badRequest('取得したい記事の件数を指定してください');
+  if (!req.query.limit)
+    throw Boom.badRequest('取得したい記事の件数を指定してください');
   return parseInt(req.query.limit.toString());
 };
 

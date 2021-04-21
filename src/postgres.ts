@@ -15,5 +15,5 @@ export const getClient: () => Promise<PoolClient> = (() => {
       client = await pool.connect();
     }
     return client;
-  }
+  };
 })();

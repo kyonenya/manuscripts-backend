@@ -1,6 +1,6 @@
 import assert from 'assert';
-import * as E from 'fp-ts/lib/Either'
-import * as TE from 'fp-ts/lib/TaskEither'
+import * as E from 'fp-ts/lib/Either';
+import * as TE from 'fp-ts/lib/TaskEither';
 import * as entryUseCase from '../entryUseCase';
 import { getClient } from '../postgres';
 import { Entry } from '../entryEntity';
@@ -23,7 +23,9 @@ describe('entryUseCase', () => {
     assert.ok(E.isRight(result));
   });
   it('deleteAll', async () => {
-    const result = await entryUseCase.deleteAll(getClient)(entries.map(entry => entry.uuid))();
+    const result = await entryUseCase.deleteAll(getClient)(
+      entries.map((entry) => entry.uuid)
+    )();
     assert.ok(E.isRight(result));
   });
 });
