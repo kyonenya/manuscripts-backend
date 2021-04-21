@@ -59,11 +59,42 @@ export const selectAllByKeyword = (client: PoolClient) => {
         ON entries.uuid = tags.uuid
       GROUP BY
         entries.uuid
-      HAVING entries.text LIKE $1
+      HAVING entries.text LIKE '%$1%'
       ORDER BY
         entries.created_at DESC
       LIMIT $2;`;
     const params = [keyword, limit];
+    const queryResult = await client.query(sql, params);
+    return queryResult.rows.map((row) => entitize(row));
+  };
+};
+
+export const selectAllByTag = (client: PoolClient) => {
+  return async (tag: string, limit: number): Promise<Entry[]> => {
+    const sql = `
+      SELECT
+        entries.*
+        ,STRING_AGG(tags.tag, ',') AS taglist
+      FROM
+        entries
+        LEFT JOIN
+          tags
+        ON  entries.uuid = tags.uuid
+      GROUP BY
+        entries.uuid
+      HAVING entries.uuid IN(
+        SELECT
+          uuid
+        FROM
+          tags
+        WHERE
+          tag = $1
+      )
+      ORDER BY
+        entries.created_at DESC
+      LIMIT $2
+      ;`;
+    const params = [tag, limit];
     const queryResult = await client.query(sql, params);
     return queryResult.rows.map((row) => entitize(row));
   };
