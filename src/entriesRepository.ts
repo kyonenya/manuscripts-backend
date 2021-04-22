@@ -46,7 +46,7 @@ export const selectAll = (client: PoolClient) => {
   };
 };
 
-export const selectAllByKeyword = (client: PoolClient) => {
+export const selectByKeyword = (client: PoolClient) => {
   return async (keyword: string, limit: number): Promise<Entry[]> => {
     const sql = `
       SELECT
@@ -69,7 +69,7 @@ export const selectAllByKeyword = (client: PoolClient) => {
   };
 };
 
-export const selectAllByTag = (client: PoolClient) => {
+export const selectByTag = (client: PoolClient) => {
   return async (tag: string, limit: number): Promise<Entry[]> => {
     const sql = `
       SELECT

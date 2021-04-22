@@ -3,11 +3,18 @@ import { getClient } from '../postgres';
 import * as entriesRepository from '../entriesRepository';
 
 describe('entriesRepository', () => {
-  it('selectAllByKeyword', async () => {
+  it('selectByKeyword', async () => {
     const keyword = '。';
     const limit = 3;
-    const dbInvoker = entriesRepository.selectAllByKeyword(await getClient());
+    const dbInvoker = entriesRepository.selectByKeyword(await getClient());
     const entries = await dbInvoker(keyword, limit);
+    assert.strictEqual(entries.length, limit);
+  });
+  it('selectByTag', async () => {
+    const tag = '演技';
+    const limit = 3;
+    const dbInvoker = entriesRepository.selectByTag(await getClient());
+    const entries = await dbInvoker(tag, limit);
     assert.strictEqual(entries.length, limit);
   });
 });
