@@ -36,4 +36,3 @@ export const router = Router()
     res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'))
   )
   .use(errorController.notFound);
-//  .use(errorController.internalError)
