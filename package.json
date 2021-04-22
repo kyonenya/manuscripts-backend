@@ -6,8 +6,8 @@
     "mocha": "mocha dist/test --ignore dist/test/api.test.js  --timeout 20000",
     "apitest": "mocha dist/test/api.test.js --timeout 20000",
     "start": "node dist/server.js",
-    "fmt": "prettier --write 'src/**/*.ts'",
-    "lint": "eslint --fix 'src/**/*.ts'",
+    "fmt": "prettier --write src/**/*.ts",
+    "lint": "eslint --fix src/**/*.ts",
     "tsc": "tsc -w"
   },
   "dependencies": {
