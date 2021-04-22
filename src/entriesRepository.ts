@@ -116,7 +116,8 @@ export const selectOne = (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw Boom.notFound('指定された記事は存在しません');
+    if (queryResult.rowCount !== 1)
+      throw Boom.notFound('指定された記事は存在しません');
     return entitize(queryResult.rows[0]);
   };
 };
@@ -179,6 +180,7 @@ export const deleteOne = (client: PoolClient) => {
       ;`;
     const params = [uuid];
     const queryResult = await client.query(sql, params);
-    if (queryResult.rowCount !== 1) throw Boom.notFound('指定された記事は存在しません');
+    if (queryResult.rowCount !== 1)
+      throw Boom.notFound('指定された記事は存在しません');
   };
 };

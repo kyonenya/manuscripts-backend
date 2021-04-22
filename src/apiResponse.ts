@@ -5,10 +5,10 @@ export const json = (res: Response) => (result: unknown): void => {
   res.json(result);
 };
 
-export const error =  (res: Response) => (err: Boom | Error): void => {
+export const error = (res: Response) => (err: Boom | Error): void => {
   if (err instanceof Boom) {
     res.status(err.output.statusCode).json({
-      error: err.output.payload
+      error: err.output.payload,
     });
     return;
   }
