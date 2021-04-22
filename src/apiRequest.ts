@@ -3,6 +3,7 @@ import Boom from '@hapi/boom';
 import * as AP from 'fp-ts/lib/Apply';
 import * as E from 'fp-ts/lib/Either';
 import * as TE from 'fp-ts/lib/TaskEither';
+import { pipe } from 'fp-ts/lib/function';
 import { Entry } from './entryEntity';
 import { authApp, uid } from './firebaseAdmin';
 
@@ -44,12 +45,19 @@ const limitQuery2 = (req: Request): E.Either<Boom.Boom<400>, number> => {
     : E.right(limit);
 };
 
+const keywordQuery = (req: Request): E.Either<Boom.Boom<400>, string> => {
+  if (!req.query.keyword) {
+    return E.left(Boom.badRequest('検索語句を指定してください'));
+  }
+  return E.right(req.query.keyword.toString());
+};
+
 export const uuidParams = (req: Request): string => {
   if (!req.params.uuid) throw Boom.badRequest('記事のuuidを指定してください');
   return req.params.uuid.toString();
 };
 
-const uuidParam2 = (req: Request): E.Either<Boom.Boom<400>, string> => {
+export const uuidParam2 = (req: Request): E.Either<Boom.Boom<any>, string> => {
   if (!req.params.uuid) {
     return E.left(Boom.badRequest('記事のuuidを指定してください'));
   }
@@ -74,6 +82,21 @@ export const readByTagRequest = (
 > => {
   return AP.sequenceS(E.either)({
     tag: tagParam(req),
+    limit: limitQuery2(req),
+  });
+};
+
+export const searchKeywordRequest = (
+  req: Request
+): E.Either<
+  Boom.Boom<400>,
+  {
+    keyword: string;
+    limit: number;
+  }
+> => {
+  return AP.sequenceS(E.either)({
+    keyword: keywordQuery(req),
     limit: limitQuery2(req),
   });
 };
