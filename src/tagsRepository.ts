@@ -1,5 +1,5 @@
 import { PoolClient } from 'pg';
-import Boom from '@hapi/boom';
+import { internal } from '@hapi/boom';
 
 export const insertAll = (client: PoolClient) => {
   return async (tags: string[] | null, uuid: string): Promise<void> => {
@@ -21,7 +21,7 @@ export const insertAll = (client: PoolClient) => {
     const params = [uuid, ...tags];
     const queryResult = await client.query(sql, params);
     if (queryResult.rowCount !== tags.length)
-      throw Boom.internal('unexpected rowCount');
+      throw internal('unexpected rowCount');
   };
 };
 
