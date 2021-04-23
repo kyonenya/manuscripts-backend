@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import * as AP from 'fp-ts/lib/Apply';
+import * as E from 'fp-ts/lib/Either';
 import * as TE from 'fp-ts/lib/TaskEither';
 import { pipe } from 'fp-ts/lib/function';
 import { getClient } from './postgres';
@@ -25,6 +27,18 @@ export const readOneEntry = (req: Request, res: Response) => {
     TE.chainEitherK(apiRequest.uuidParam),
     TE.chain(entryUseCase.readOne(getClient)),
     TE.map((result) => res.json(result))
+  );
+};
+
+export const searchKeyword = (req: Request) => {
+  return pipe(
+    TE.right(req),
+    TE.chain(apiRequest.validateToken),
+    TE.chainEitherK((req) => AP.sequenceS(E.either)({
+      keyword: apiRequest.keywordQuery(req),
+      limit: apiRequest.limitQuery(req),
+    })),
+    // TODO
   );
 };
 
