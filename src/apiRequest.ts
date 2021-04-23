@@ -31,13 +31,7 @@ export const validateToken = (
   return E.right(req);
 };
 
-export const limitQuery = (req: Request): number => {
-  if (!req.query.limit)
-    throw badRequest('取得したい記事の件数を指定してください');
-  return parseInt(req.query.limit.toString());
-};
-
-const limitQuery2 = (req: Request): E.Either<Boom<400>, number> => {
+export const limitQuery = (req: Request): E.Either<Boom, number> => {
   if (!req.query.limit) return E.right(defaultLimit);
   const limit = Number.parseInt(req.query.limit.toString(), 10);
   return Number.isNaN(limit)
@@ -45,26 +39,21 @@ const limitQuery2 = (req: Request): E.Either<Boom<400>, number> => {
     : E.right(limit);
 };
 
-const keywordQuery = (req: Request): E.Either<Boom<400>, string> => {
+export const keywordQuery = (req: Request): E.Either<Boom, string> => {
   if (!req.query.keyword) {
     return E.left(badRequest('検索語句を指定してください'));
   }
   return E.right(req.query.keyword.toString());
 };
 
-export const uuidParams = (req: Request): string => {
-  if (!req.params.uuid) throw badRequest('記事のuuidを指定してください');
-  return req.params.uuid.toString();
-};
-
-export const uuidParam2 = (req: Request): E.Either<Boom<any>, string> => {
+export const uuidParam = (req: Request): E.Either<Boom<any>, string> => {
   if (!req.params.uuid) {
     return E.left(badRequest('記事のuuidを指定してください'));
   }
   return E.right(req.params.uuid.toString());
 };
 
-const tagParam = (req: Request): E.Either<Boom<400>, string> => {
+export const tagParam = (req: Request): E.Either<Boom, string> => {
   if (!req.params.tag) {
     return E.left(badRequest('記事のタグを指定してください'));
   }
@@ -74,7 +63,7 @@ const tagParam = (req: Request): E.Either<Boom<400>, string> => {
 export const readByTagRequest = (
   req: Request
 ): E.Either<
-  Boom<400>,
+  Boom,
   {
     tag: string;
     limit: number;
@@ -82,14 +71,14 @@ export const readByTagRequest = (
 > => {
   return AP.sequenceS(E.either)({
     tag: tagParam(req),
-    limit: limitQuery2(req),
+    limit: limitQuery(req),
   });
 };
 
 export const searchKeywordRequest = (
   req: Request
 ): E.Either<
-  Boom<400>,
+  Boom,
   {
     keyword: string;
     limit: number;
@@ -97,6 +86,6 @@ export const searchKeywordRequest = (
 > => {
   return AP.sequenceS(E.either)({
     keyword: keywordQuery(req),
-    limit: limitQuery2(req),
+    limit: limitQuery(req),
   });
 };
