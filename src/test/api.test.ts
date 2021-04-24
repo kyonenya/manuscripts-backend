@@ -61,9 +61,9 @@ describe('Api', async () => {
 
   it('keywordSearch', async () => {
     const idToken = await getIdToken(uid);
-    const keyword = 'x';
+    const q = encodeURI('。');
     const limit = 3;
-    const result = await fetch(`${baseUrl}/api/entries?q=${keyword}&limit=${limit}`, {
+    const result = await fetch(`${baseUrl}/api/entries?q=${q}&limit=${limit}`, {
       method: 'GET',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
