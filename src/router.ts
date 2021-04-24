@@ -1,5 +1,5 @@
 import Router from 'express-promise-router';
-import { Request, Response } from 'express';
+import { Request, Response, RequestHandler } from 'express';
 import path from 'path';
 import { pipe } from 'fp-ts/lib/function';
 import * as TE from 'fp-ts/lib/TaskEither';
@@ -10,7 +10,7 @@ import * as errorController from './errorController';
 
 const wrapper = (
   controller: (req: Request) => TE.TaskEither<Boom | Error, unknown>
-) => (req: Request, res: Response) => {
+): RequestHandler => (req: Request, res: Response) => {
   pipe(
     controller(req),
     TE.map(apiResponse.json(res)),
@@ -23,6 +23,7 @@ export const router = Router()
   .get('/api/entries/:uuid', (req, res) =>
     apiController.readOneEntry(req, res)()
   )
+  .get('/api/entries/search', wrapper(apiController.searchKeyword))
   .post('/api/entries/:uuid', (req, res) =>
     apiController.createNewEntry(req, res)()
   )

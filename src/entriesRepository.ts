@@ -1,6 +1,7 @@
 import { PoolClient } from 'pg';
 import { notFound, internal } from '@hapi/boom';
 import dayjs from 'dayjs';
+import { getClient } from './postgres';
 import * as tagsRepository from './tagsRepository';
 import { Entry } from './entryEntity';
 
@@ -46,27 +47,29 @@ export const selectAll = (client: PoolClient) => {
   };
 };
 
-export const selectByKeyword = (client: PoolClient) => {
-  return async (keyword: string, limit: number): Promise<Entry[]> => {
-    const sql = `
-      SELECT
-        entries.*
-        ,STRING_AGG(tags.tag, ',') AS taglist
-      FROM
-        entries
-        LEFT JOIN
-          tags
-        ON entries.uuid = tags.uuid
-      GROUP BY
-        entries.uuid
-      HAVING entries.text LIKE '%' || $1 || '%'
-      ORDER BY
-        entries.created_at DESC
-      LIMIT $2;`;
-    const params = [keyword, limit];
-    const queryResult = await client.query(sql, params);
-    return queryResult.rows.map((row) => entitize(row));
-  };
+export const selectByKeyword = async (props: {
+  keyword: string;
+  limit: number;
+}): Promise<Entry[]> => {
+  const sql = `
+    SELECT
+      entries.*
+      ,STRING_AGG(tags.tag, ',') AS taglist
+    FROM
+      entries
+      LEFT JOIN
+        tags
+      ON entries.uuid = tags.uuid
+    GROUP BY
+      entries.uuid
+    HAVING entries.text LIKE '%' || $1 || '%'
+    ORDER BY
+      entries.created_at DESC
+    LIMIT $2;`;
+  const params = [props.keyword, props.limit];
+  const client = await getClient();
+  const queryResult = await client.query(sql, params);
+  return queryResult.rows.map((row) => entitize(row));
 };
 
 export const selectByTag = (client: PoolClient) => {

@@ -47,6 +47,16 @@ export const readOne = (getClient: () => Promise<PoolClient>) => (
   return E.right(result);
 };
 
+export const searchKeyword = (props: {
+  keyword: string;
+  limit: number;
+}): TE.TaskEither<Boom, Entry[]> => {
+  return TE.tryCatch(
+    () => entriesRepository.selectByKeyword(props),
+    (x: any) => boomify(x)
+  );
+};
+
 export const updateOne = (getClient: () => Promise<PoolClient>) => (
   entry: Entry
 ): TE.TaskEither<Boom, Entry> => async () => {

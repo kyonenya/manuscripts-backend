@@ -6,8 +6,7 @@ describe('entriesRepository', () => {
   it('selectByKeyword', async () => {
     const keyword = '。';
     const limit = 3;
-    const dbInvoker = entriesRepository.selectByKeyword(await getClient());
-    const entries = await dbInvoker(keyword, limit);
+    const entries = await entriesRepository.selectByKeyword({ keyword, limit });
     assert.strictEqual(entries.length, limit);
   });
   it('selectByTag', async () => {

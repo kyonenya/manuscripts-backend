@@ -9,9 +9,7 @@ import * as entryUseCase from './entryUseCase';
 import * as apiRequest from './apiRequest';
 import { Entry } from './entryEntity';
 
-export const readAllEntries = (
-  req: Request
-): TE.TaskEither<Boom, Entry[]> => {
+export const readAllEntries = (req: Request): TE.TaskEither<Boom, Entry[]> => {
   return pipe(
     TE.right(req),
     TE.chain(apiRequest.validateToken),
@@ -30,15 +28,17 @@ export const readOneEntry = (req: Request, res: Response) => {
   );
 };
 
-export const searchKeyword = (req: Request) => {
+export const searchKeyword = (req: Request): TE.TaskEither<Boom, Entry[]> => {
   return pipe(
     TE.right(req),
     TE.chain(apiRequest.validateToken),
-    TE.chainEitherK((req) => AP.sequenceS(E.either)({
-      keyword: apiRequest.keywordQuery(req),
-      limit: apiRequest.limitQuery(req),
-    })),
-    // TODO
+    TE.chainEitherK((req) =>
+      AP.sequenceS(E.either)({
+        keyword: apiRequest.keywordQuery(req),
+        limit: apiRequest.limitQuery(req),
+      })
+    ),
+    TE.chain(entryUseCase.searchKeyword)
   );
 };
 
