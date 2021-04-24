@@ -59,6 +59,22 @@ describe('Api', async () => {
     assert.strictEqual(result[0].text, entry.text);
   });
 
+  it('keywordSearch', async () => {
+    const idToken = await getIdToken(uid);
+    const keyword = 'x';
+    const limit = 3;
+    const result = await fetch(`${baseUrl}/api/entries?q=${keyword}&limit=${limit}`, {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+        Authorization: `Bearer: ${idToken}`,
+      },
+    })
+      .then((response) => response.json())
+      .catch((err) => console.error(err));
+    assert.strictEqual(result.length, 3);
+  });
+
   it('Update', async () => {
     const idToken = await getIdToken(uid);
     const entry2 = {
