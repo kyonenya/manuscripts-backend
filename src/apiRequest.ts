@@ -40,10 +40,10 @@ export const limitQuery = (req: Request): E.Either<Boom, number> => {
 };
 
 export const keywordQuery = (req: Request): E.Either<Boom, string> => {
-  if (!req.query.keyword) {
+  if (!req.query.q) {
     return E.left(badRequest('検索語句を指定してください'));
   }
-  return E.right(req.query.keyword.toString());
+  return E.right(req.query.q.toString());
 };
 
 export const uuidParam = (req: Request): E.Either<Boom<any>, string> => {

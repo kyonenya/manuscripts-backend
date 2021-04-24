@@ -1,4 +1,5 @@
 import assert from 'assert';
+import * as E from 'fp-ts/lib/Either';
 import * as apiRequest from '../apiRequest';
 import { getIdToken, uid } from '../firebaseAdmin';
 import { Entry } from '../entryEntity';
@@ -13,6 +14,16 @@ describe('apiRequest', () => {
     };
     // @ts-ignore
     const result = await apiRequest.validateToken(req);
+  });
+  it('keywordQuery', async () => {
+    const req = {
+      query: {
+        q: '検索語句',
+      },
+    };
+    // @ts-ignore
+    const result = await apiRequest.keywordQuery(req);
+    assert.ok(E.isRight(result));
   });
   it('starred', () => {
     assert.deepStrictEqual(
