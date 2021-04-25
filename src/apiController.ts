@@ -18,13 +18,12 @@ export const readAllEntries = (req: Request): TE.TaskEither<Boom, Entry[]> => {
   );
 };
 
-export const readOneEntry = (req: Request, res: Response) => {
+export const readOneEntry = (req: Request): TE.TaskEither<Boom, Entry> => {
   return pipe(
     TE.right(req),
     TE.chain(apiRequest.validateToken),
     TE.chainEitherK(apiRequest.uuidParam),
     TE.chain(entryUseCase.readOne(getClient)),
-    TE.map((result) => res.json(result))
   );
 };
 
@@ -42,35 +41,29 @@ export const searchKeyword = (req: Request): TE.TaskEither<Boom, Entry[]> => {
   );
 };
 
-export const createNewEntry = (
-  req: Request,
-  res: Response
-): TE.TaskEither<Boom, Response> => {
+export const createNewEntry = (req: Request): TE.TaskEither<Boom, Entry> => {
   return pipe(
     TE.right(req),
     TE.chain(apiRequest.validateToken),
     TE.map(apiRequest.entitize),
     TE.chain(entryUseCase.createOne(getClient)),
-    TE.map((result) => res.json(result))
   );
 };
 
-export const updateEntry = (req: Request, res: Response) => {
+export const updateEntry = (req: Request): TE.TaskEither<Boom, Entry> => {
   return pipe(
     TE.right(req),
     TE.chain(apiRequest.validateToken),
     TE.map(apiRequest.entitize),
     TE.chain(entryUseCase.updateOne(getClient)),
-    TE.map((result) => res.json(result))
   );
 };
 
-export const deleteEntry = (req: Request, res: Response) => {
+export const deleteEntry = (req: Request): TE.TaskEither<Boom, string> => {
   return pipe(
     TE.right(req),
     TE.chain(apiRequest.validateToken),
     TE.chainEitherK(apiRequest.uuidParam),
     TE.chain(entryUseCase.deleteOne(getClient)),
-    TE.map((result) => res.json(result))
   );
 };

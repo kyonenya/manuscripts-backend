@@ -20,20 +20,9 @@ const wrapper = (
 
 export const router = Router()
   .get('/api/entries', wrapper(apiController.readAllEntries))
-  .get('/api/entries/:uuid', (req, res) =>
-    apiController.readOneEntry(req, res)()
-  )
+  .get('/api/entries/:uuid', wrapper(apiController.readOneEntry))
   .get('/api/entries/search', wrapper(apiController.searchKeyword))
-  .post('/api/entries/:uuid', (req, res) =>
-    apiController.createNewEntry(req, res)()
-  )
-  .put('/api/entries/:uuid', (req, res) =>
-    apiController.updateEntry(req, res)()
-  )
-  .delete('/api/entries/:uuid', (req, res) =>
-    apiController.deleteEntry(req, res)()
-  )
-  .get('/', (req, res) =>
-    res.sendFile(path.resolve(__dirname, '..', 'public', 'index.html'))
-  )
+  .post('/api/entries/:uuid', wrapper(apiController.createNewEntry))
+  .put('/api/entries/:uuid', wrapper(apiController.updateEntry))
+  .delete('/api/entries/:uuid', wrapper(apiController.deleteEntry))
   .use(errorController.notFound);
