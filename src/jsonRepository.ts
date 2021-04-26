@@ -11,9 +11,13 @@ type jsonEntry = {
   starred: boolean;
 };
 
+const unescape = (text: string | null) => text
+  ? text.replace(/\\/g, '').replace(/&nbsp;/g, '')
+  : '';
+
 const entitize = (row: jsonEntry) => {
   return new Entry({
-    text: row.text ? unescape(row.text.replace(/\\/g, '')) : '',
+    text: unescape(row.text),
     starred: row.starred,
     uuid: row.uuid,
     tags: row.tags,
@@ -25,5 +29,6 @@ const entitize = (row: jsonEntry) => {
 export const readAll = async (filePath: string): Promise<Entry[]> => {
   const json = await fs.promises.readFile(filePath, 'utf-8');
   const jsonEntries: jsonEntry[] = JSON.parse(json).entries;
-  return jsonEntries.map((entry) => entitize(entry));
+  return jsonEntries.filter(entry => entry.text !== undefined)
+    .map((entry) => entitize(entry));
 };
