@@ -11,8 +11,8 @@ type jsonEntry = {
   starred: boolean;
 };
 
-const unescape = (text: string | null) => text
-  ? text.replace(/\\/g, '').replace(/&nbsp;/g, '')
+export const unescape = (text: string | null) => text
+  ? text.replace(/\\/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '')
   : '';
 
 const entitize = (row: jsonEntry) => {
