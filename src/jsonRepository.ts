@@ -12,7 +12,10 @@ type jsonEntry = {
 };
 
 export const unescape = (text: string | null) => text
-  ? text.replace(/\\/g, '').replace(/[\u200B-\u200D\uFEFF]/g, '')
+  ? text
+    .replace(/\\n/g, '\n') // "\\n" -> "\n"
+    .replace(/\\/g, '') // "\." -> "."
+    .replace(/[\u200B-\u200D\uFEFF]/g, '') // ゼロ幅スペースを削除
   : '';
 
 const entitize = (row: jsonEntry) => {
