@@ -6,12 +6,14 @@
     "mocha": "mocha dist/test --ignore dist/test/api.test.js  --timeout 20000",
     "apitest": "mocha dist/test/api.test.js --timeout 20000",
     "start": "node dist/server.js",
-    "fmt": "prettier --write 'src/**/*.ts'",
+    "fmt": "prettier --write src/**/*.ts",
+    "lint": "eslint --fix src/**/*.ts",
     "tsc": "tsc -w"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.2",
     "cors": "^2.8.5",
+    "dayjs": "^1.10.4",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-promise-router": "^4.1.0",
@@ -31,7 +33,11 @@
     "@types/node-fetch": "^2.5.8",
     "@types/pg": "^7.14.8",
     "@types/uuid": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "assert": "^2.0.0",
+    "eslint": "^7.24.0",
+    "eslint-config-prettier": "^8.2.0",
     "mocha": "^8.2.1",
     "prettier": "^2.2.1"
   },

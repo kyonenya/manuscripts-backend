@@ -5,7 +5,8 @@ dotenv.config();
 
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
+  // ssl: { rejectUnauthorized: false },
+  ssl: false,
 });
 
 export const getClient: () => Promise<PoolClient> = (() => {
@@ -15,5 +16,5 @@ export const getClient: () => Promise<PoolClient> = (() => {
       client = await pool.connect();
     }
     return client;
-  }
+  };
 })();
